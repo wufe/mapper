@@ -1,0 +1,23 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "noImplicitAny": false,
+        "removeComments": true,
+        "preserveConstEnums": true,
+        "sourceMap": true,
+        "target": "es6",
+        "types": [
+            "reflect-metadata"
+        ],
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "outDir": "lib",
+        "baseUrl": "src",        
+        "inlineSources": false,
+        "declaration": true
+    },
+    "exclude": [
+        "node_modules"
+    ]
+}

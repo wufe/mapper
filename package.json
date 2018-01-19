@@ -1,0 +1,20 @@
+{
+  "name": "mapper",
+  "version": "0.0.1",
+  "description": "Object to object mapper in Typescript",
+  "main": "lib/index.js",
+  "repository": "https://github.com/Wufe/mapper.git",
+  "author": "Simone Bembi <simone.bembi@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "awesome-typescript-loader": "^3.4.1",
+    "reflect-metadata": "^0.1.12",
+    "ts-node": "^4.1.0",
+    "typescript": "^2.6.2",
+    "webpack": "^3.10.0"
+  },
+  "scripts": {
+    "build": "webpack --env.development",
+    "build:prod": "webpack --env.production"
+  }
+}
