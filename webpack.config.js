@@ -16,7 +16,8 @@ module.exports = (env) => {
         entry: './src/index.ts',
         output: {
             path: path.resolve(__dirname, 'lib'),
-            filename: 'index.js'
+            filename: 'index.js',
+            libraryTarget: 'umd'
         },
         module: {
             loaders: [

@@ -1,21 +1,22 @@
 {
     "compilerOptions": {
         "module": "commonjs",
-        "moduleResolution": "node",
+        "moduleResolution": "classic",
         "noImplicitAny": false,
         "removeComments": true,
         "preserveConstEnums": true,
         "sourceMap": true,
-        "target": "es6",
+        "target": "es5",
         "types": [
             "reflect-metadata"
         ],
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
-        "outDir": "lib",
+        "outDir": "types",
         "baseUrl": "src",        
         "inlineSources": false,
-        "declaration": true
+        "declaration": true,
+        "declarationDir": "../types"
     },
     "exclude": [
         "node_modules"
