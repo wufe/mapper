@@ -1,14 +1,14 @@
 import { StringElementSelector } from "selectors";
 import { ElementOperation, SourceElementOperation, Operation, OperationConfiguration } from "operations";
-import { IConfiguration, Configuration, IMapConfiguration, ISingleMapConfiguration } from "configuration";
+import { IConfiguration, Configuration, IMapConfiguration, ISingleMapConfiguration, TConfigurationSetter } from "configuration";
 
 export interface IGenericMap {}
 
 export interface IMap<S, D> extends IGenericMap{
-    withConfiguration: (mapConfiguration: (configurationObject: IConfiguration) => IConfiguration) => this;
+    withConfiguration: (mapConfiguration: TConfigurationSetter<IConfiguration>) => this;
 	forMember: ( selector: StringElementSelector<D>, operation: ElementOperation<S> ) => this;
 	forSourceMember: ( selector: StringElementSelector<S>, operation: SourceElementOperation<D> ) => this;
-	mapWith: (mapConfiguration: (mapConfigurationObject: IMapConfiguration) => IMapConfiguration, sourceEntity: S, destinationEntity?: D) => D;
+	mapWith: (mapConfiguration: TConfigurationSetter<IMapConfiguration>, sourceEntity: S, destinationEntity?: D) => D;
 	map: (sourceEntity: S, destinationEntity?: D) => D;
 }
 
@@ -27,7 +27,7 @@ export class Map<S, D> implements IMap<S, D>{
         this._sourceOperations = this._sourceOperations.filter(opt => opt.selector !== selector);
     }
 
-    withConfiguration: (mapConfiguration: (configurationObject: IMapConfiguration) => IMapConfiguration) => this =
+    withConfiguration: (mapConfiguration: TConfigurationSetter<IMapConfiguration>) => this =
         (mapConfiguration) => {
 			this._configuration = {
 				...this._configuration
@@ -61,7 +61,7 @@ export class Map<S, D> implements IMap<S, D>{
 			return this.internalMap(this._configuration, source, destination);
 		};
 
-	mapWith: (mapConfiguration: (mapConfigurationObject: ISingleMapConfiguration) => ISingleMapConfiguration, sourceEntity: S, destinationEntity?: D) => D =
+	mapWith: (mapConfiguration: TConfigurationSetter<ISingleMapConfiguration>, sourceEntity: S, destinationEntity?: D) => D =
 		(mapConfiguration, source, destination) => {
 			const newConfiguration = mapConfiguration({
 				...this._configuration

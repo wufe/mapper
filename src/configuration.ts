@@ -11,6 +11,8 @@ export interface ISingleMapConfiguration extends IMapConfiguration {
 
 }
 
+export type TConfigurationSetter<T extends IConfiguration> = (configuration: T) => T;
+
 export class Configuration implements ISingleMapConfiguration {
     public explicitlySetProperties: boolean = false;
     public ignoreSourcePropertiesIfNotInDestination: boolean = false;
