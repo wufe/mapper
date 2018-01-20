@@ -1,4 +1,5 @@
 import { IGenericMap, IMap, Map } from "map";
+import { IConfiguration, Configuration } from "configuration";
 
 export type MapSignature = {
 	source: symbol;
@@ -10,13 +11,20 @@ export type Mapping = MapSignature & {
 }
 
 export class Mapper {
-	private _mappings: Mapping[] = [];
+    private _mappings: Mapping[] = [];
+    private _configuration = new Configuration();
+
+    withConfiguration: (mapConfiguration: (configurationObject: IConfiguration) => void) => this =
+        (mapConfiguration) => {
+            mapConfiguration(this._configuration);
+            return this;
+        };
 
 	createMap = <S, D>({
 		source,
 		destination
 	}: MapSignature, destinationEntity: { new(): D }): IMap<S, D> => {
-		const map = new Map<S, D>(destinationEntity);
+		const map = new Map<S, D>(destinationEntity, this._configuration);
 		this._mappings.push({
 			source,
 			destination,

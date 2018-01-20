@@ -12,3 +12,4 @@ Supports:
 + Nested redudant mapping
 + Denormalization helpers
 + Override of pre-existing rules to behave differently in runtime (edge cases)  
++ Automatically mapping arrays  

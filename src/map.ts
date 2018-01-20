@@ -1,9 +1,11 @@
 import { StringElementSelector } from "selectors";
 import { ElementOperation, SourceElementOperation, Operation, OperationConfiguration } from "operations";
+import { IConfiguration, Configuration } from "configuration";
 
 export interface IGenericMap {}
 
 export interface IMap<S, D> extends IGenericMap{
+    withConfiguration: (mapConfiguration: (configurationObject: IConfiguration) => void) => this;
 	forMember: ( selector: StringElementSelector<D>, operation: ElementOperation<S> ) => this;
 	forSourceMember: ( selector: StringElementSelector<S>, operation: SourceElementOperation<D> ) => this;
 	map: (sourceEntity: S, destinationEntity?: D) => D;
@@ -12,16 +14,23 @@ export interface IMap<S, D> extends IGenericMap{
 export class Map<S, D> implements IMap<S, D>{
 
 	private _destOperations: Operation<D, S>[] = [];
-	private _sourceOperations: Operation<S, D>[] = [];
+    private _sourceOperations: Operation<S, D>[] = [];
 
 	constructor(
-		private DestinationClass: { new(): D }
+        private DestinationClass: { new(): D },
+        private _configuration: Configuration = new Configuration()
     ) {}
     
     private filterOperationsBySelector(selector: StringElementSelector<S> | StringElementSelector<D>) {
         this._destOperations = this._destOperations.filter(opt => opt.selector !== selector);
         this._sourceOperations = this._sourceOperations.filter(opt => opt.selector !== selector);
     }
+
+    withConfiguration: (mapConfiguration: (configurationObject: IConfiguration) => void) => this =
+        (mapConfiguration) => {
+            mapConfiguration(this._configuration);
+            return this;
+        }
 
 	forMember: (selector: StringElementSelector<D>, operation: ElementOperation<S>) => this =
 		(selector, operation) => {
@@ -62,14 +71,20 @@ export class Map<S, D> implements IMap<S, D>{
 				if(newValue !== undefined)
 					source[sourceOperation.selector] = newValue;
 				mappedProperties.push(sourceOperation.selector);
-			}
-			for(let key in source){
-				if(source[key] !== undefined && mappedProperties.indexOf(key) == -1){
-					(destinationObject as D & {
-						[index: string]: any;
-					})[key] = source[key];
-				}
-			}
+            }
+            if (!this._configuration.explicitlySetProperties) {
+                for(let key in source){
+                    if (source[key] !== undefined && mappedProperties.indexOf(key) == -1) {
+                        const destinationHasTheProperty = Object.keys(destinationObject).indexOf(key) > -1;
+                        const shouldMap = destinationHasTheProperty || !this._configuration.ignoreSourcePropertiesIfNotInDestination;
+                        if (shouldMap) {
+                            (destinationObject as D & {
+                                [index: string]: any;
+                            })[key] = source[key];
+                        }
+                    }
+                }
+            }
 			return destinationObject;
 		};
 };

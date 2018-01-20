@@ -15,9 +15,11 @@ describe("Mapper", () => {
     class S {
         a: string;
         b: string;
+        c: string;
     }
     class D {
         a: string;
+        c: string;
     }
 
     const mappingSignature = {
@@ -102,5 +104,48 @@ describe("Mapper", () => {
 
         expect((mappedDestination as any).b).to.not.be.undefined;
         expect((mappedDestination as any).b).to.equal(source.b);
+    });
+    it("should map explicitly set ONLY properties, if configured so", () => {
+        const mapper = new Mapper()
+            .withConfiguration(conf => conf.shouldRequireExplicitlySetProperties(true));
+        mapper.createMap<S, D>(mappingSignature, D)
+            .forMember("a", opt => opt.mapFrom(s => s.a));
+
+        const source = new S();
+        source.a = 'a';
+        source.b = 'b';
+
+        const mappedDestination = mapper.map<S, D>(mappingSignature, source);
+
+        expect(mappedDestination.a).to.not.be.undefined;
+        expect(mappedDestination.a).to.equal(source.a);
+
+        expect((mappedDestination as any).b).to.be.undefined;
+        expect(mappedDestination.c).to.be.undefined;
+    });
+    it("should map NOT explicitly set ONLY properties, if configured so, overriding previously set configuration", () => {
+        const mapper = new Mapper()
+            .withConfiguration(conf => conf.shouldRequireExplicitlySetProperties(true));
+        mapper.createMap<S, D>(mappingSignature, D)
+            .withConfiguration(conf => conf.shouldRequireExplicitlySetProperties(false))
+            .forMember("a", opt => opt.mapFrom(s => s.a));
+
+        const source = new S();
+        source.a = 'a';
+        source.b = 'b';
+        source.c = 'c';
+
+        const destination = new D();
+        destination.c = '';
+        
+        const mappedDestination = mapper.map<S, D>(mappingSignature, source, destination);
+
+        expect(mappedDestination.a).to.not.be.undefined;
+        expect(mappedDestination.a).to.equal(source.a);
+
+        expect((mappedDestination as any).b).to.not.be.undefined;
+        expect((mappedDestination as any).b).to.equal(source.b);
+        expect(mappedDestination.c).to.not.be.undefined;
+        expect(mappedDestination.c).to.equal(source.c);
     });
 });
