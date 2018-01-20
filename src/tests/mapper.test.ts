@@ -146,7 +146,6 @@ describe("Mapper", () => {
 
         expect((mappedDestination as any).b).to.not.be.undefined;
         expect((mappedDestination as any).b).to.equal(source.b);
-        expect(mappedDestination.c).to.not.be.undefined;
         expect(mappedDestination.c).to.equal(source.c);
     });
 });
