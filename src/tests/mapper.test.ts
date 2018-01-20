@@ -148,7 +148,7 @@ describe("Mapper", () => {
         expect((mappedDestination as any).b).to.equal(source.b);
         expect(mappedDestination.c).to.equal(source.c);
     });
-    it("should map NOT explicitly set ONLY properties, if configured so, overriding previously set configuration twice", () => {
+    it("should map explicitly set ONLY properties, if configured so, overriding previously set configuration twice", () => {
         const mapper = new Mapper()
             .withConfiguration(conf => conf.shouldRequireExplicitlySetProperties(true));
         mapper.createMap<S, D>(mappingSignature, D)
