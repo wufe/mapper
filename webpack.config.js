@@ -15,7 +15,7 @@ module.exports = (env) => {
         },
         entry: './src/index.ts',
         output: {
-            path: path.resolve(__dirname, 'dist'),
+            path: path.resolve(__dirname, isDev ? 'build' : 'dist'),
             filename: 'index.js',
             libraryTarget: 'umd'
         },
@@ -31,6 +31,6 @@ module.exports = (env) => {
                 }
             ]
         },
-        target: 'node'
+        target: 'web'
     };
 }
