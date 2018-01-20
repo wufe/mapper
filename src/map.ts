@@ -72,7 +72,6 @@ export class Map<S, D> implements IMap<S, D>{
 	private internalMap(configuration: Configuration, source: S, destination?: D) {
 		if (!source)
 			return;
-		// console.log(configuration);
 		let destinationObject: D = destination !== undefined ? destination : new this.DestinationClass();
 		let mappedProperties: string[] = [];
 		for(let destOperation of this._destOperations){
