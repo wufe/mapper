@@ -1,5 +1,5 @@
 import { IGenericMap, IMap, Map } from "map";
-import { IConfiguration, Configuration, IMapConfiguration } from "configuration";
+import { IConfiguration, Configuration, IMapConfiguration, ISingleMapConfiguration } from "configuration";
 
 export type MapSignature = {
 	source: symbol;
@@ -34,7 +34,7 @@ export class Mapper {
 	};
 
 	mapWith<S, D>(
-		mapConfiguration: (mapConfigurationObject: IMapConfiguration) => IMapConfiguration,
+		mapConfiguration: (mapConfigurationObject: ISingleMapConfiguration) => ISingleMapConfiguration,
 		{source, destination}: MapSignature,
 		sourceEntity: S,
 		destinationEntity?: D
