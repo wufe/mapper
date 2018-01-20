@@ -20,10 +20,10 @@ export class Mapper {
             return this;
         };
 
-	createMap = <S, D>({
+	createMap<S, D>({
 		source,
 		destination
-	}: MapSignature, destinationEntity: { new(): D }): IMap<S, D> => {
+	}: MapSignature, destinationEntity: { new(): D }): IMap<S, D> {
 		const map = new Map<S, D>(destinationEntity, this._configuration);
 		this._mappings.push({
 			source,
