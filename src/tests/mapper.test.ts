@@ -148,4 +148,24 @@ describe("Mapper", () => {
         expect((mappedDestination as any).b).to.equal(source.b);
         expect(mappedDestination.c).to.equal(source.c);
     });
+    it("should map NOT explicitly set ONLY properties, if configured so, overriding previously set configuration twice", () => {
+        const mapper = new Mapper()
+            .withConfiguration(conf => conf.shouldRequireExplicitlySetProperties(true));
+        mapper.createMap<S, D>(mappingSignature, D)
+            .withConfiguration(conf => conf.shouldRequireExplicitlySetProperties(false))
+            .forMember("a", opt => opt.mapFrom(s => s.a));
+
+        const source = new S();
+        source.a = 'a';
+        source.b = 'b';
+        source.c = 'c';
+        
+        const mappedDestination = mapper.mapWith<S, D>(conf => conf.shouldRequireExplicitlySetProperties(true), mappingSignature, source);
+
+        expect(mappedDestination.a).to.not.be.undefined;
+        expect(mappedDestination.a).to.equal(source.a);
+
+        expect((mappedDestination as any).b).to.not.equal(source.b);
+        expect(mappedDestination.c).to.not.equal(source.c);
+    });
 });

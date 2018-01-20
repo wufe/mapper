@@ -3,7 +3,11 @@ export interface IConfiguration {
     shouldIgnoreSourcePropertiesIfNotInDestination: (value: boolean) => this;
 }
 
-export class Configuration implements IConfiguration {
+export interface IMapConfiguration extends IConfiguration {
+    
+}
+
+export class Configuration implements IMapConfiguration {
     public explicitlySetProperties: boolean = false;
     public ignoreSourcePropertiesIfNotInDestination: boolean = false;
 

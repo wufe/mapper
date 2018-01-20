@@ -1,5 +1,5 @@
 import { IGenericMap, IMap, Map } from "map";
-import { IConfiguration, Configuration } from "configuration";
+import { IConfiguration, Configuration, IMapConfiguration } from "configuration";
 
 export type MapSignature = {
 	source: symbol;
@@ -33,13 +33,34 @@ export class Mapper {
 		return map;
 	};
 
-	map = <S, D>({ source, destination }: MapSignature, sourceEntity: S, destinationEntity?: D): D => {
+	mapWith<S, D>(
+		mapConfiguration: (mapConfigurationObject: IMapConfiguration) => IMapConfiguration,
+		{source, destination}: MapSignature,
+		sourceEntity: S,
+		destinationEntity?: D
+	): D {
+		const map = this.getMap<S, D>({ source, destination });
+		if (!map)
+			return;
+		return map.mapWith(mapConfiguration, sourceEntity, destinationEntity);
+	}
+
+	map<S, D>(
+		{ source, destination }: MapSignature,
+		sourceEntity: S,
+		destinationEntity?: D
+	): D {
+		const map = this.getMap<S, D>({ source, destination });
+		if (!map)
+			return;
+		return map.map(sourceEntity, destinationEntity);
+	}
+
+	private getMap<S, D>({source, destination}: MapSignature): Map<S, D> {
 		let mapping: Mapping = this._mappings
-			.filter(m => m.source === source && m.destination === destination)[0];
-		if(mapping){
-			let map: Map<S, D> = mapping.map as Map<S, D>;
-			return map.map(sourceEntity, destinationEntity);
-		}
+			.find(m => m.source === source && m.destination === destination);
+		if (mapping)
+			return mapping.map as Map<S, D>;
 		return;
 	}
 }
