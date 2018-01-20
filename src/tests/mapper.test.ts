@@ -20,6 +20,9 @@ describe("Mapper", () => {
     class D {
         a: string;
         c: string;
+        constructor() {
+            this.c = 'sample';
+        }
     }
 
     const mappingSignature = {
@@ -114,6 +117,7 @@ describe("Mapper", () => {
         const source = new S();
         source.a = 'a';
         source.b = 'b';
+        source.c = 'c';
 
         const mappedDestination = mapper.map<S, D>(mappingSignature, source);
 
@@ -121,7 +125,7 @@ describe("Mapper", () => {
         expect(mappedDestination.a).to.equal(source.a);
 
         expect((mappedDestination as any).b).to.be.undefined;
-        expect(mappedDestination.c).to.be.undefined;
+        expect(mappedDestination.c).to.not.equal(source.c);
     });
     it("should map NOT explicitly set ONLY properties, if configured so, overriding previously set configuration", () => {
         const mapper = new Mapper()
@@ -134,11 +138,8 @@ describe("Mapper", () => {
         source.a = 'a';
         source.b = 'b';
         source.c = 'c';
-
-        const destination = new D();
-        destination.c = '';
         
-        const mappedDestination = mapper.map<S, D>(mappingSignature, source, destination);
+        const mappedDestination = mapper.map<S, D>(mappingSignature, source);
 
         expect(mappedDestination.a).to.not.be.undefined;
         expect(mappedDestination.a).to.equal(source.a);
