@@ -15,7 +15,7 @@ module.exports = (env) => {
         },
         entry: './src/index.ts',
         output: {
-            path: path.resolve(__dirname, 'lib'),
+            path: path.resolve(__dirname, 'dist'),
             filename: 'index.js',
             libraryTarget: 'umd'
         },
@@ -23,7 +23,10 @@ module.exports = (env) => {
             loaders: [
                 {
                     test: /\.ts$/,
-                    exclude: /node_modules/i,
+                    exclude: [
+                        'node_modules',
+                        '**/*.test.ts'
+                    ],
                     use: ['awesome-typescript-loader']
                 }
             ]

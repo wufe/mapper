@@ -16,10 +16,16 @@ export class Map<S, D> implements IMap<S, D>{
 
 	constructor(
 		private DestinationClass: { new(): D }
-	) {}
+    ) {}
+    
+    private filterOperationsBySelector(selector: StringElementSelector<S> | StringElementSelector<D>) {
+        this._destOperations = this._destOperations.filter(opt => opt.selector !== selector);
+        this._sourceOperations = this._sourceOperations.filter(opt => opt.selector !== selector);
+    }
 
 	forMember: (selector: StringElementSelector<D>, operation: ElementOperation<S>) => this =
 		(selector, operation) => {
+            this.filterOperationsBySelector(selector);
 			this._destOperations.push({
 				selector,
 				operation
@@ -29,6 +35,7 @@ export class Map<S, D> implements IMap<S, D>{
 
 	forSourceMember: (selector: StringElementSelector<S>, operation: ElementOperation<D>) => this =
 		(selector, operation) => {
+            this.filterOperationsBySelector(selector);
 			this._sourceOperations.push({
 				selector,
 				operation

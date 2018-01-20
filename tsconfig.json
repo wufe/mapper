@@ -6,7 +6,7 @@
         "removeComments": true,
         "preserveConstEnums": true,
         "sourceMap": true,
-        "target": "es5",
+        "target": "es6",
         "types": [
             "reflect-metadata"
         ],
@@ -16,7 +16,10 @@
         "baseUrl": "src",        
         "inlineSources": false,
         "declaration": true,
-        "declarationDir": "../types"
+        "declarationDir": "../types",
+        "paths": {
+            "*": [ "./*" ]
+        }
     },
     "exclude": [
         "node_modules"

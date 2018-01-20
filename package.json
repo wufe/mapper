@@ -2,7 +2,7 @@
   "name": "mapper",
   "version": "0.0.1",
   "description": "Object to object mapper in Typescript",
-  "main": "lib/index.js",
+  "main": "dist/index.js",
   "repository": "https://github.com/Wufe/mapper.git",
   "author": "Simone Bembi <simone.bembi@gmail.com>",
   "license": "MIT",
@@ -15,12 +15,14 @@
     "reflect-metadata": "^0.1.12",
     "ts-loader": "^3.2.0",
     "ts-node": "^4.1.0",
+    "tsconfig-paths": "^3.1.1",
     "typescript": "^2.6.2",
     "webpack": "^3.10.0"
   },
   "scripts": {
     "build": "webpack --env.development",
     "build:prod": "webpack --env.production",
-    "test": "yarn run build:prod && mocha tests/**/*.test.js"
-  }
+    "test": "mocha -r ts-node/register -r tsconfig-paths/register src/tests/**/*.test.ts"
+  },
+  "types": "types"
 }
