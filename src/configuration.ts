@@ -1,5 +1,5 @@
 export type TPreconditionConfiguration<T> = (element: T) => boolean;
-export type TProjectionConfiguration<S, D> = (source: S) => Partial<D[keyof D]>;
+export type TProjectionConfiguration<S, D> = (source: S, destination?: D) => Partial<D[keyof D]>;
 
 export interface IFieldConfiguration<S, D> {
     sourcePrecondition: (configuration: TPreconditionConfiguration<S>) => this;

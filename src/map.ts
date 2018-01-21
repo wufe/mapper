@@ -81,7 +81,7 @@ export class Map<S, D> implements IMap<S, D>{
 			let newValue = destOperation.operation(operationConfiguration) as any;
 			// apply projection
 			if(configuration.projectionConfiguration !== undefined)
-				newValue = configuration.projectionConfiguration(source);
+				newValue = configuration.projectionConfiguration(source, destinationObject);
 			if(newValue !== undefined)
 				destinationObject[destOperation.selector] = newValue;
 			mappedProperties.push(destOperation.selector);

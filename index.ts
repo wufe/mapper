@@ -1,46 +1,46 @@
 import { Mapper } from "mapper";
 
-class S {
-    a: string;
-    b: string;
-    c: string;
-}
-class D {
-    a: {
-        text: string;
-    };
-    c: string;
-    constructor() {
-        this.c = 'sample';
-    }
+class ProductEntity {
+    items: ItemEntity[] = [];
 }
 
-const mappingSignature = {
-    source: Symbol('source'),
-    destination: Symbol('destination')
+class ItemEntity {
+    constructor(private id: number) {}
+}
+
+const source = new ProductEntity();
+source.items = [1,2,3].map(x => new ItemEntity(x));
+
+class Product {
+    items: Item[] = [];
+}
+
+class Item {
+    id: number;
+    product: Product;
+}
+
+const productSignature = {
+    source: Symbol('ProductEntity'),
+    destination: Symbol('Product')
+};
+const itemSignature = {
+    source: Symbol('ItemEntity'),
+    destination: Symbol('Item')
 };
 
-class Z {
-    a: {
-        text: string;
-    };
-}
-
 const mapper = new Mapper();
-mapper.createMap<S, Z>(mappingSignature, Z)
-    .forMember("a", opt =>
-        opt.mapFrom(
-            s => s.a,
-            conf =>
-                conf
-                    .withProjection(source => ({
-                        text: source.a
-                    }))
-        )
-    );
+mapper.createMap<ProductEntity, Product>(productSignature, Product)
+    .forMember("items", opt => opt.mapFrom(source => source.items, conf => conf.withProjection((source, dest) => {
+        const ret = mapper
+            .mapArray<ItemEntity, Item>(itemSignature, source.items);
+        ret.forEach(items => items.product = dest);
+        return ret;
+    })))
+mapper.createMap<ItemEntity, Item>(itemSignature, Item);
 
-const source = new S();
-source.a = '123';
+const mappedDestination = mapper.map<ProductEntity, Product>(productSignature, source);
 
-const mappedDestination = mapper.map<S, Z>(mappingSignature, source);
 console.log(mappedDestination);
+
+console.log(mappedDestination.items[0].product.items[0].product.items[0].product)
