@@ -7,7 +7,11 @@ export interface IOperationConfiguration<S, D, T> extends IPreconditionConfigura
 	mapFrom: ( selector: ElementSelector<T>, configuration?: (fieldConfiguration: IFieldConfiguration<S, D>) => IFieldConfiguration<S, D> ) => this;
 	ignore: () => this;
 	mapAs: (selector: ElementSelector<T>, signature: MapSignature, configuration?: (fieldConfiguration: IFieldConfiguration<S, D>) => IFieldConfiguration<S, D>) => this;
-    withProjection: (projectionConfiguration: TProjectionConfiguration<S, D>) => this;
+	withProjection: (projectionConfiguration: TProjectionConfiguration<S, D>) => this;
+	depth: number;
+	source: S;
+	destination: D;
+	getParent: <PS, PD>() => IOperationConfiguration<PS, PD, T>;
 }
 
 export interface ISourceOperationConfiguration<T> {
@@ -25,12 +29,21 @@ export type Operation<S, D, T, K> = {
 export class OperationConfiguration<S, D, T> extends PreconditionConfiguration<S, D> implements IOperationConfiguration<S, D, T>, ISourceOperationConfiguration<T>{
 	constructor(
 		private _entity: T,
-		private _source: S,
-		private _destination: D,
+		public source: S,
+		public destination: D,
 		private _fieldConfiguration: FieldConfiguration<S, D> = new FieldConfiguration(),
-		private _mapper: Mapper
+		private _mapper: Mapper,
+		public depth: number = 0,
+		private parent?: any
 	) {
-		super()
+		super();
+		const conf = _fieldConfiguration as any;
+		this.depth = conf.depth;
+		this.parent = conf.parent;
+	}
+
+	getParent = <PS, PD>() => {
+		return this.parent as IOperationConfiguration<PS, PD, T>;
 	}
 
 	selectedElement: T[keyof T];
@@ -41,7 +54,7 @@ export class OperationConfiguration<S, D, T> extends PreconditionConfiguration<S
 			// check preconditions
 			return preconditions
 				.reduce(
-					(passing, pre) => pre(this._source, this._destination) ? passing : false, true
+					(passing, pre) => pre(this.source, this.destination) ? passing : false, true
 				);
 		}
 		return true;
@@ -62,10 +75,13 @@ export class OperationConfiguration<S, D, T> extends PreconditionConfiguration<S
 	}
 
 	mapAs = (selector: ElementSelector<T>, signature: MapSignature, configuration?: (fieldConfiguration: IFieldConfiguration<S, D>) => IFieldConfiguration<S, D>) => {
-		if (configuration) {
-			this._fieldConfiguration = configuration(this._fieldConfiguration) as FieldConfiguration<S, D>;
-		}
-		this.selectedElement = this._mapper.map<T[keyof T], T[keyof T]>(signature, selector(this._entity));
+		this.selectedElement = this._mapper.map<T[keyof T], T[keyof T]>(signature, selector(this._entity), undefined, (conf: any) => {
+			conf.depth++;
+			conf.parent = this;
+			if (configuration)
+				return configuration(conf);
+			return conf;
+		});
 		return this;
 	}
 

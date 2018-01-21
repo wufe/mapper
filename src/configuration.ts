@@ -32,6 +32,8 @@ export interface ISingleMapConfiguration<S, D> extends IMapConfiguration, IField
 export type TConfigurationSetter<T extends IConfiguration> = (configuration: T) => T;
 
 export class Configuration<S, D> extends FieldConfiguration<S, D> implements ISingleMapConfiguration<S, D> {
+    private depth = 0;
+    private parent: Configuration<any, any>;
     explicitlySetProperties: boolean = false;
     ignoreSourcePropertiesIfNotInDestination: boolean = false;
 
@@ -46,7 +48,7 @@ export class Configuration<S, D> extends FieldConfiguration<S, D> implements ISi
             this.ignoreSourcePropertiesIfNotInDestination = value;
             return this;
         };
-
+        
     //#region To do
     shouldAutomaticallyMapArrays = (value: boolean) => this;
     shouldPreserveReference = (value: boolean) => this;

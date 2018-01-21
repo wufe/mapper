@@ -12,7 +12,7 @@ export type Mapping = MapSignature & {
 
 export class Mapper {
     private _mappings: Mapping[] = [];
-    private _configuration = new Configuration();
+	private _configuration = new Configuration();
 
     withConfiguration: (mapperConfiguration: TConfigurationSetter<IConfiguration>) => this =
         (mapperConfiguration) => {
@@ -36,56 +36,29 @@ export class Mapper {
 	map<S, D>(
 		{ source, destination }: MapSignature,
 		sourceEntity: S,
-		destinationEntity?: D
+		destinationEntity?: D,
+		mapActionConfiguration?: TConfigurationSetter<ISingleMapConfiguration<S, D>>
 	): D {
 		const map = this.getMap<S, D>({ source, destination });
 		if (!map)
 			return;
-		return map.map(sourceEntity, destinationEntity);
+		return map.map(sourceEntity, destinationEntity, mapActionConfiguration);
 	}
 
 	mapArray<S, D>(
 		{source, destination}: MapSignature,
 		sourceArray: S[],
-		destinationArray?: D[]
+		destinationArray?: D[],
+		mapActionConfiguration?: TConfigurationSetter<ISingleMapConfiguration<S, D>>
 	): D[] {
 		const map = this.getMap<S, D>({ source, destination });
 		if (!map)
 			return [];
 		if (!destinationArray || sourceArray.length !== destinationArray.length)
 			return sourceArray
-				.map(sourceEnitity => this.map({ source, destination }, sourceEnitity));
+				.map(sourceEntity => this.map({ source, destination }, sourceEntity, undefined, mapActionConfiguration));
 		sourceArray
-			.forEach((sourceEntity, index) => destinationArray[index] = this.map({ source, destination }, sourceEntity, destinationArray[index]));
-		return destinationArray;
-	}
-
-	mapWith<S, D>(
-		mapActionConfiguration: TConfigurationSetter<ISingleMapConfiguration<S, D>>,
-		{source, destination}: MapSignature,
-		sourceEntity: S,
-		destinationEntity?: D
-	): D {
-		const map = this.getMap<S, D>({ source, destination });
-		if (!map)
-			return;
-		return map.mapWith(mapActionConfiguration, sourceEntity, destinationEntity);
-	}
-
-	mapArrayWith<S, D>(
-		mapActionConfiguration: TConfigurationSetter<ISingleMapConfiguration<S, D>>,
-		{source, destination}: MapSignature,
-		sourceArray: S[],
-		destinationArray?: D[]
-	): D[] {
-		const map = this.getMap<S, D>({ source, destination });
-		if (!map)
-			return [];
-		if (!destinationArray || sourceArray.length !== destinationArray.length)
-			return sourceArray
-				.map(sourceEnitity => this.mapWith(mapActionConfiguration, { source, destination }, sourceEnitity));
-		sourceArray
-			.forEach((sourceEntity, index) => destinationArray[index] = this.mapWith(mapActionConfiguration, { source, destination }, sourceEntity, destinationArray[index]));
+			.forEach((sourceEntity, index) => destinationArray[index] = this.map({ source, destination }, sourceEntity, destinationArray[index], mapActionConfiguration));
 		return destinationArray;
 	}
 

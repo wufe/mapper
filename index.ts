@@ -1,9 +1,8 @@
 import { Mapper } from "mapper";
 
-import { Mapper } from "mapper";
-
 class ProductEntity {
     items: ItemEntity[] = [];
+    item: ItemEntity;
 }
 
 class ItemEntity {
@@ -12,9 +11,11 @@ class ItemEntity {
 
 const source = new ProductEntity();
 source.items = [1,2,3].map(x => new ItemEntity(x));
+source.item = new ItemEntity(4);
 
 class Product {
     items: Item[] = [];
+    item: Item;
 }
 
 class Item {
@@ -33,19 +34,14 @@ const itemSignature = {
 
 const mapper = new Mapper();
 mapper.createMap<ProductEntity, Product>(productSignature, Product)
-    .forMember("items", opt =>
-        opt.mapFrom(source => source.items)
-            .withProjection((source, dest) => {
-                const ret = mapper
-                    .mapArray<ItemEntity, Item>(itemSignature, source.items);
-                ret.forEach(items => items.product = dest);
-                return ret;
-            })
+    .forMember("item", opt =>
+        opt.mapAs(source => source.item, itemSignature)
     );
-mapper.createMap<ItemEntity, Item>(itemSignature, Item);
+mapper.createMap<ItemEntity, Item>(itemSignature, Item)
+    .forMember("product", opt => opt.mapFrom(() => opt.getParent<ProductEntity, Product>()!.destination));
 
 const mappedDestination = mapper.map<ProductEntity, Product>(productSignature, source);
 
 console.log(mappedDestination);
 
-console.log(mappedDestination.items[0].product.items[0].product.items[0].product);
+console.log(mappedDestination.item.product.item.product.item.product);
