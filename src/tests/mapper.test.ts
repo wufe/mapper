@@ -299,4 +299,32 @@ describe("Mapper", () => {
             mappingSignature, source);
         expect(fifthMappedDestination.a).to.not.equal(source.a);
     });
+    it("should follow shape provided by configuration", () => {
+
+        class Z {
+            a: {
+                text: string;
+            };
+        }
+
+        const mapper = new Mapper();
+        mapper.createMap<S, Z>(mappingSignature, Z)
+            .forMember("a", opt =>
+                opt.mapFrom(
+                    s => s.a,
+                    conf =>
+                        conf
+                            .withProjection(source => ({
+                                text: source.a
+                            }))
+                )
+            );
+
+        const source = new S();
+        source.a = '123';
+
+        const mappedDestination = mapper.map<S, Z>(mappingSignature, source);
+        expect(mappedDestination.a).to.not.be.undefined;
+        expect(mappedDestination.a.text).to.equal(source.a);
+    });
 });

@@ -14,9 +14,9 @@ export class Mapper {
     private _mappings: Mapping[] = [];
     private _configuration = new Configuration();
 
-    withConfiguration: (mapConfiguration: TConfigurationSetter<IConfiguration>) => this =
-        (mapConfiguration) => {
-            mapConfiguration(this._configuration);
+    withConfiguration: (mapperConfiguration: TConfigurationSetter<IConfiguration>) => this =
+        (mapperConfiguration) => {
+            mapperConfiguration(this._configuration);
             return this;
         };
 
@@ -34,7 +34,7 @@ export class Mapper {
 	};
 
 	mapWith<S, D>(
-		mapConfiguration: TConfigurationSetter<ISingleMapConfiguration<S, D>>,
+		mapActionConfiguration: TConfigurationSetter<ISingleMapConfiguration<S, D>>,
 		{source, destination}: MapSignature,
 		sourceEntity: S,
 		destinationEntity?: D
@@ -42,7 +42,7 @@ export class Mapper {
 		const map = this.getMap<S, D>({ source, destination });
 		if (!map)
 			return;
-		return map.mapWith(mapConfiguration, sourceEntity, destinationEntity);
+		return map.mapWith(mapActionConfiguration, sourceEntity, destinationEntity);
 	}
 
 	map<S, D>(
