@@ -8,8 +8,9 @@ This library provides an API to map an object into another object, following pre
 It is designed with redux's reducers in mind, so it is a perfect fit when used as application's state incremental modifier.
 
 Supports:
-+ Immutability
-+ Nested redudant mapping
++ ~~Immutability~~
++ ~~Nested mapping~~
++ Redudant mapping
 + Denormalization helpers
-+ Override of pre-existing rules to behave differently in runtime (edge cases)  
-+ Automatically mapping arrays  
++ ~~Override of pre-existing rules to behave differently in runtime (edge cases)~~
++ ~~Array mapping~~
