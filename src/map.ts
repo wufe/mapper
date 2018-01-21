@@ -1,6 +1,6 @@
 import { StringElementSelector } from "selectors";
 import { ElementOperation, SourceElementOperation, Operation, OperationConfiguration } from "operations";
-import { IConfiguration, Configuration, IMapConfiguration, ISingleMapConfiguration, TConfigurationSetter } from "configuration";
+import { IConfiguration, Configuration, IMapConfiguration, ISingleMapConfiguration, TConfigurationSetter, FieldConfiguration } from "configuration";
 
 export interface IGenericMap {}
 
@@ -31,7 +31,7 @@ export class Map<S, D> implements IMap<S, D>{
         (mapConfiguration) => {
 			this._configuration = {
 				...this._configuration
-			};
+			} as Configuration<S, D>;
 			this._configuration = mapConfiguration(this._configuration) as Configuration<S, D>;
             return this;
         }
@@ -75,14 +75,14 @@ export class Map<S, D> implements IMap<S, D>{
 		let destinationObject: D = destination !== undefined ? destination : new this.DestinationClass();
 		let mappedProperties: string[] = [];
 		for(let destOperation of this._destOperations){
-			let operationConfiguration = new OperationConfiguration<S, D, S>(source, source, destinationObject);
+			let operationConfiguration = new OperationConfiguration<S, D, S>(source, source, destinationObject, configuration as FieldConfiguration<S, D>);
 			let newValue = destOperation.operation(operationConfiguration) as any;
 			if(newValue !== undefined)
 				destinationObject[destOperation.selector] = newValue;
 			mappedProperties.push(destOperation.selector);
 		}
 		for(let sourceOperation of this._sourceOperations){
-			let operationConfiguration = new OperationConfiguration<S, D, D>(destinationObject, source, destinationObject);
+			let operationConfiguration = new OperationConfiguration<S, D, D>(destinationObject, source, destinationObject, configuration as FieldConfiguration<S, D>);
 			let newValue = sourceOperation.operation(operationConfiguration) as any;
 			if(newValue !== undefined)
 				source[sourceOperation.selector] = newValue;

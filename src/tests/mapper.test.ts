@@ -230,4 +230,73 @@ describe("Mapper", () => {
         const fourthMappedDestination = mapper.map<S, D>(mappingSignature, source, destination);
         expect(fourthMappedDestination.a).to.not.equal(source.a);
     });
+    it("should check if chained preconditions are satisfied on mapping action", () => {
+        const mapper = new Mapper();
+        mapper.createMap<S, D>(mappingSignature, D)
+            .forMember("a", opt =>
+                opt.mapFrom(
+                    s => s.a,
+                    conf => conf
+                        .sourcePrecondition(source => source.a !== '12345')
+                )
+            );
+
+        const source = new S();
+        source.a = '123';
+
+        const firstMappedDestination = mapper.mapWith<S, D>(
+            conf =>
+                conf
+                    .sourcePrecondition(source => source.a !== '123')
+                    .sourcePrecondition(source => source.a !== '321')
+                    .destinationPrecondition(destination => destination.a === undefined)
+                    .destinationPrecondition(destination => destination.c === 'sample'),
+            mappingSignature, source);
+        expect(firstMappedDestination.a).to.not.equal(source.a);
+
+        source.a = '321';
+        const secondMappedDestination = mapper.mapWith<S, D>(
+            conf =>
+                conf
+                    .sourcePrecondition(source => source.a !== '123')
+                    .sourcePrecondition(source => source.a !== '321')
+                    .destinationPrecondition(destination => destination.a === undefined)
+                    .destinationPrecondition(destination => destination.c === 'sample'),
+            mappingSignature, source);
+        expect(secondMappedDestination.a).to.not.equal(source.a);
+
+        source.a = '1234';
+        const thirdMappedDestination = mapper.mapWith<S, D>(
+            conf =>
+                conf
+                    .sourcePrecondition(source => source.a !== '123')
+                    .sourcePrecondition(source => source.a !== '321')
+                    .destinationPrecondition(destination => destination.a === undefined)
+                    .destinationPrecondition(destination => destination.c === 'sample'),
+            mappingSignature, source);
+        expect(thirdMappedDestination.a).to.equal(source.a);
+
+        const destination = new D();
+        destination.c = 'definitely not "sample"';
+        const fourthMappedDestination = mapper.mapWith<S, D>(
+            conf =>
+                conf
+                    .sourcePrecondition(source => source.a !== '123')
+                    .sourcePrecondition(source => source.a !== '321')
+                    .destinationPrecondition(destination => destination.a === undefined)
+                    .destinationPrecondition(destination => destination.c === 'sample'),
+            mappingSignature, source, destination);
+        expect(fourthMappedDestination.a).to.not.equal(source.a);
+
+        source.a = '12345';
+        const fifthMappedDestination = mapper.mapWith<S, D>(
+            conf =>
+                conf
+                    .sourcePrecondition(source => source.a !== '123')
+                    .sourcePrecondition(source => source.a !== '321')
+                    .destinationPrecondition(destination => destination.a === undefined)
+                    .destinationPrecondition(destination => destination.c === 'sample'),
+            mappingSignature, source);
+        expect(fifthMappedDestination.a).to.not.equal(source.a);
+    });
 });
