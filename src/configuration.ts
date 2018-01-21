@@ -33,22 +33,22 @@ export class Configuration implements ISingleMapConfiguration {
 export type TPreconditionConfiguration<T> = (element: T) => boolean;
 
 export interface IFieldConfiguration<S, D> {
-    precondition: (configuration: TPreconditionConfiguration<S>) => this;
+    sourcePrecondition: (configuration: TPreconditionConfiguration<S>) => this;
     destinationPrecondition: (configuration: TPreconditionConfiguration<D>) => this;
 }
 
 export class FieldConfiguration<S, D> implements IFieldConfiguration<S, D> {
 
-    private _sourcePreconditions: TPreconditionConfiguration<S>[] = [];
-    private _destPreconditions: TPreconditionConfiguration<D>[] = [];
+    sourcePreconditions: TPreconditionConfiguration<S>[] = [];
+    destinationPreconditions: TPreconditionConfiguration<D>[] = [];
 
-    precondition(configuration: TPreconditionConfiguration<S>) {
-        this._sourcePreconditions.push(configuration);
+    sourcePrecondition(configuration: TPreconditionConfiguration<S>) {
+        this.sourcePreconditions.push(configuration);
         return this;
     }
 
     destinationPrecondition(configuration: TPreconditionConfiguration<D>) {
-        this._destPreconditions.push(configuration);
+        this.destinationPreconditions.push(configuration);
         return this;
     }
 }

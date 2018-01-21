@@ -6,7 +6,7 @@ export interface IGenericMap {}
 
 export interface IMap<S, D> extends IGenericMap{
     withConfiguration: (mapConfiguration: TConfigurationSetter<IConfiguration>) => this;
-	forMember: ( selector: StringElementSelector<D>, operation: ElementOperation<S> ) => this;
+	forMember: ( selector: StringElementSelector<D>, operation: ElementOperation<S, D, S> ) => this;
 	forSourceMember: ( selector: StringElementSelector<S>, operation: SourceElementOperation<D> ) => this;
 	mapWith: (mapConfiguration: TConfigurationSetter<IMapConfiguration>, sourceEntity: S, destinationEntity?: D) => D;
 	map: (sourceEntity: S, destinationEntity?: D) => D;
@@ -14,8 +14,8 @@ export interface IMap<S, D> extends IGenericMap{
 
 export class Map<S, D> implements IMap<S, D>{
 
-	private _destOperations: Operation<D, S>[] = [];
-	private _sourceOperations: Operation<S, D>[] = [];
+	private _destOperations: Operation<S, D, D, S>[] = [];
+	private _sourceOperations: Operation<S, D, S, D>[] = [];
 
 	constructor(
         private DestinationClass: { new(): D },
@@ -36,7 +36,7 @@ export class Map<S, D> implements IMap<S, D>{
             return this;
         }
 
-	forMember: (selector: StringElementSelector<D>, operation: ElementOperation<S>) => this =
+	forMember: (selector: StringElementSelector<D>, operation: ElementOperation<S, D, S>) => this =
 		(selector, operation) => {
             this.filterOperationsBySelector(selector);
 			this._destOperations.push({
@@ -46,7 +46,7 @@ export class Map<S, D> implements IMap<S, D>{
 			return this;
 		};
 
-	forSourceMember: (selector: StringElementSelector<S>, operation: ElementOperation<D>) => this =
+	forSourceMember: (selector: StringElementSelector<S>, operation: ElementOperation<S, D, D>) => this =
 		(selector, operation) => {
             this.filterOperationsBySelector(selector);
 			this._sourceOperations.push({
@@ -75,14 +75,14 @@ export class Map<S, D> implements IMap<S, D>{
 		let destinationObject: D = destination !== undefined ? destination : new this.DestinationClass();
 		let mappedProperties: string[] = [];
 		for(let destOperation of this._destOperations){
-			let operationConfiguration = new OperationConfiguration<S, D, S>(source);
+			let operationConfiguration = new OperationConfiguration<S, D, S>(source, source, destinationObject);
 			let newValue = destOperation.operation(operationConfiguration) as any;
 			if(newValue !== undefined)
 				destinationObject[destOperation.selector] = newValue;
 			mappedProperties.push(destOperation.selector);
 		}
 		for(let sourceOperation of this._sourceOperations){
-			let operationConfiguration = new OperationConfiguration<S, D, D>(destinationObject);
+			let operationConfiguration = new OperationConfiguration<S, D, D>(destinationObject, source, destinationObject);
 			let newValue = sourceOperation.operation(operationConfiguration) as any;
 			if(newValue !== undefined)
 				source[sourceOperation.selector] = newValue;
