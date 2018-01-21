@@ -14,3 +14,14 @@ Supports:
 + Denormalization helpers
 + ~~Override of pre-existing rules to behave differently in runtime (edge cases)~~
 + ~~Array mapping~~
+
+**Redundant mapping implementation idea**  
+
+```typescript
+mapper.createMap<ProductEntity, Product>(productSignature, Product)
+    .forMember("items", opt =>
+        opt.mapAs(itemSignature, Item, conf =>
+            conf.preservingReferenceForOf("product", opt.source)
+        )
+    );
+```
