@@ -84,7 +84,7 @@ export class Map<S, D> implements IMap<S, D>{
 			const operationPreconditionsPassing = operationConfiguration.arePreconditionsPassing(operationConfiguration.preconditions);
 			const mapActionPreconditionsPassing = operationConfiguration.arePreconditionsPassing(configuration.preconditions);
 			if (operationPreconditionsPassing && mapActionPreconditionsPassing)
-				newValue = operationConfiguration.selectedElement as any;
+				newValue = operationConfiguration.selectedElement;
 			
 			// apply projection
 			if(operationConfiguration.projectionConfiguration !== undefined)

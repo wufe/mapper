@@ -20,9 +20,11 @@ Supports:
 ```typescript
 mapper.createMap<ProductEntity, Product>(productSignature, Product)
     .forMember("items", opt =>
-        opt.mapAs(itemSignature, Item, conf =>
-            conf.preservingReferenceForOf("product", opt.source)
-        )
+        opt.mapAs(itemSignature, Item)
+    );
+mapper.createMap<ItemEntity, Item>(itemSignature, Item)
+    .forMember("product", opt =>
+        opt.mapFrom(() => opt.parent.destination)
     );
 ```
 
