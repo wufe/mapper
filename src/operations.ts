@@ -1,9 +1,13 @@
 import { ElementSelector, ElementsType, StringElementSelector } from "selectors";
 import { FieldConfiguration, IFieldConfiguration } from "configuration";
+import { MapSignature } from "mapper";
 
 export interface IOperationConfiguration<S, D, T> {
 	mapFrom: ( selector: ElementSelector<T>, configuration?: (fieldConfiguration: IFieldConfiguration<S, D>) => IFieldConfiguration<S, D> ) => ElementsType<T>;
 	ignore: () => ElementsType<T>;
+	//#region To do
+	mapAs: (selector: ElementSelector<T>, signature: MapSignature) => ElementsType<T>;
+	//#endregion
 }
 
 export interface ISourceOperationConfiguration<T> {
@@ -50,4 +54,10 @@ export class OperationConfiguration<S, D, T> implements IOperationConfiguration<
 		};
 
 	ignore = () => undefined as ElementsType<T>;
+
+	//#region To do
+	mapAs = (selector: ElementSelector<T>, signature: MapSignature) => {
+		throw new Error('Method not implemented.');
+	}
+	//#endregion
 }

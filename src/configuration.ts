@@ -32,6 +32,11 @@ export class FieldConfiguration<S, D> implements IFieldConfiguration<S, D> {
 export interface IConfiguration {
     shouldRequireExplicitlySetProperties: (value: boolean) => this;
     shouldIgnoreSourcePropertiesIfNotInDestination: (value: boolean) => this;
+    //#region To do
+    shouldAutomaticallyMapArrays: (value: boolean) => this;
+    shouldPreserveReference: (value: boolean) => this;
+    maxDepth: (value: number) => this;
+    //#endregion
 }
 
 export interface IMapConfiguration extends IConfiguration {
@@ -59,5 +64,11 @@ export class Configuration<S, D> extends FieldConfiguration<S, D> implements ISi
             this.ignoreSourcePropertiesIfNotInDestination = value;
             return this;
         };
+
+    //#region To do
+    shouldAutomaticallyMapArrays = (value: boolean) => this;
+    shouldPreserveReference = (value: boolean) => this;
+    maxDepth = (value: number) => this;
+    //#endregion
 }
 
