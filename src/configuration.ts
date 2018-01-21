@@ -29,7 +29,7 @@ export class FieldConfiguration<S, D> implements IFieldConfiguration<S, D> {
     }
 }
 
-export interface IConfiguration {
+export interface IConfiguration { // mapper configuration
     shouldRequireExplicitlySetProperties: (value: boolean) => this;
     shouldIgnoreSourcePropertiesIfNotInDestination: (value: boolean) => this;
     //#region To do
@@ -39,11 +39,11 @@ export interface IConfiguration {
     //#endregion
 }
 
-export interface IMapConfiguration extends IConfiguration {
+export interface IMapConfiguration extends IConfiguration { // map configuration
     
 }
 
-export interface ISingleMapConfiguration<S, D> extends IMapConfiguration, IFieldConfiguration<S, D> {
+export interface ISingleMapConfiguration<S, D> extends IMapConfiguration, IFieldConfiguration<S, D> { // map action configuration
 
 }
 

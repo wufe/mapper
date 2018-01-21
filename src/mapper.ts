@@ -33,6 +33,33 @@ export class Mapper {
 		return map;
 	};
 
+	map<S, D>(
+		{ source, destination }: MapSignature,
+		sourceEntity: S,
+		destinationEntity?: D
+	): D {
+		const map = this.getMap<S, D>({ source, destination });
+		if (!map)
+			return;
+		return map.map(sourceEntity, destinationEntity);
+	}
+
+	mapArray<S, D>(
+		{source, destination}: MapSignature,
+		sourceArray: S[],
+		destinationArray?: D[]
+	): D[] {
+		const map = this.getMap<S, D>({ source, destination });
+		if (!map)
+			return [];
+		if (!destinationArray || sourceArray.length !== destinationArray.length)
+			return sourceArray
+				.map(sourceEnitity => this.map({ source, destination }, sourceEnitity));
+		sourceArray
+			.forEach((sourceEntity, index) => destinationArray[index] = this.map({ source, destination }, sourceEntity, destinationArray[index]));
+		return destinationArray;
+	}
+
 	mapWith<S, D>(
 		mapActionConfiguration: TConfigurationSetter<ISingleMapConfiguration<S, D>>,
 		{source, destination}: MapSignature,
@@ -45,15 +72,21 @@ export class Mapper {
 		return map.mapWith(mapActionConfiguration, sourceEntity, destinationEntity);
 	}
 
-	map<S, D>(
-		{ source, destination }: MapSignature,
-		sourceEntity: S,
-		destinationEntity?: D
-	): D {
+	mapArrayWith<S, D>(
+		mapActionConfiguration: TConfigurationSetter<ISingleMapConfiguration<S, D>>,
+		{source, destination}: MapSignature,
+		sourceArray: S[],
+		destinationArray?: D[]
+	): D[] {
 		const map = this.getMap<S, D>({ source, destination });
 		if (!map)
-			return;
-		return map.map(sourceEntity, destinationEntity);
+			return [];
+		if (!destinationArray || sourceArray.length !== destinationArray.length)
+			return sourceArray
+				.map(sourceEnitity => this.mapWith(mapActionConfiguration, { source, destination }, sourceEnitity));
+		sourceArray
+			.forEach((sourceEntity, index) => destinationArray[index] = this.mapWith(mapActionConfiguration, { source, destination }, sourceEntity, destinationArray[index]));
+		return destinationArray;
 	}
 
 	private getMap<S, D>({source, destination}: MapSignature): Map<S, D> {

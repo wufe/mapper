@@ -327,4 +327,19 @@ describe("Mapper", () => {
         expect(mappedDestination.a).to.not.be.undefined;
         expect(mappedDestination.a.text).to.equal(source.a);
     });
+    it("should be able to map arrays", () => {
+        const mapper = new Mapper();
+        mapper.createMap<S, D>(mappingSignature, D);
+
+        const s1 = new S();
+        s1.a = 'a1';
+        const s2 = new S();
+        s2.a = 'a2';
+        const sources: S[] = [ s1, s2 ];
+
+        const mappedDestinations = mapper.mapArray<S, D>(mappingSignature, sources);
+        expect(mappedDestinations.length).to.equal(2);
+        expect(mappedDestinations[0].a).to.equal(s1.a);
+        expect(mappedDestinations[1].a).to.equal(s2.a);
+    });
 });
