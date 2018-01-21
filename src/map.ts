@@ -1,6 +1,7 @@
 import { StringElementSelector } from "selectors";
 import { ElementOperation, SourceElementOperation, Operation, OperationConfiguration } from "operations";
 import { IConfiguration, Configuration, IMapConfiguration, ISingleMapConfiguration, TConfigurationSetter, FieldConfiguration } from "configuration";
+import { Mapper } from "mapper";
 
 export interface IGenericMap {}
 
@@ -19,7 +20,8 @@ export class Map<S, D> implements IMap<S, D>{
 
 	constructor(
         private DestinationClass: { new(): D },
-        private _configuration: Configuration<S, D> = new Configuration()
+		private _configuration: Configuration<S, D> = new Configuration(),
+		private _mapper: Mapper
     ) {}
     
     private filterOperationsBySelector(selector: StringElementSelector<S> | StringElementSelector<D>) {
@@ -75,7 +77,7 @@ export class Map<S, D> implements IMap<S, D>{
 		let destinationObject: D = destination !== undefined ? destination : new this.DestinationClass();
 		let mappedProperties: string[] = [];
 		for(let destOperation of this._destOperations){
-			let operationConfiguration = new OperationConfiguration<S, D, S>(source, source, destinationObject, configuration as FieldConfiguration<S, D>);
+			let operationConfiguration = new OperationConfiguration<S, D, S>(source, source, destinationObject, configuration as FieldConfiguration<S, D>, this._mapper);
 			let newValue = destOperation.operation(operationConfiguration) as any;
 			// apply projection
 			if(configuration.projectionConfiguration !== undefined)
@@ -85,7 +87,7 @@ export class Map<S, D> implements IMap<S, D>{
 			mappedProperties.push(destOperation.selector);
 		}
 		for(let sourceOperation of this._sourceOperations){
-			let operationConfiguration = new OperationConfiguration<S, D, D>(destinationObject, source, destinationObject, configuration as FieldConfiguration<S, D>);
+			let operationConfiguration = new OperationConfiguration<S, D, D>(destinationObject, source, destinationObject, configuration as FieldConfiguration<S, D>, this._mapper);
 			let newValue = sourceOperation.operation(operationConfiguration) as any;
 			if(newValue !== undefined)
 				source[sourceOperation.selector] = newValue;

@@ -342,4 +342,44 @@ describe("Mapper", () => {
         expect(mappedDestinations[0].a).to.equal(s1.a);
         expect(mappedDestinations[1].a).to.equal(s2.a);
     });
+    it("should be able to map complex objects", () => {
+        class S1 {
+            a: S2;
+        }
+
+        class S2 {
+            s: string = 's';
+        }
+
+        class D1 {
+            a: D2;
+        }
+
+        class D2 {
+            d: string = 'd';
+        }
+
+        const source = new S1();
+        source.a = new S2();
+
+        const S1D1Signature = {
+            source: Symbol('S1'),
+            destination: Symbol('D1')
+        };
+        const S2D2Signature = {
+            source: Symbol('S2'),
+            destination: Symbol('D2')
+        };
+
+        const mapper = new Mapper();
+        mapper.withConfiguration(conf => conf.shouldRequireExplicitlySetProperties(true));
+        mapper.createMap<S1, D1>(S1D1Signature, D1)
+            .forMember('a', opt => opt.mapAs(source => source.a, S2D2Signature));
+        mapper.createMap<S2, D2>(S2D2Signature, D2)
+            .forMember('d', opt => opt.mapFrom(source => source.s));
+
+        const mappedDestination = mapper.map<S1, D1>(S1D1Signature, source);
+
+        expect(mappedDestination.a.d).to.equal(source.a.s);
+    });
 });

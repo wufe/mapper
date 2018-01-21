@@ -24,7 +24,7 @@ export class Mapper {
 		source,
 		destination
 	}: MapSignature, destinationEntity: { new(): D }): IMap<S, D> {
-		const map = new Map<S, D>(destinationEntity, this._configuration as Configuration<S, D>);
+		const map = new Map<S, D>(destinationEntity, this._configuration as Configuration<S, D>, this);
 		this._mappings.push({
 			source,
 			destination,

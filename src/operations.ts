@@ -1,13 +1,11 @@
 import { ElementSelector, ElementsType, StringElementSelector } from "selectors";
 import { FieldConfiguration, IFieldConfiguration } from "configuration";
-import { MapSignature } from "mapper";
+import { MapSignature, Mapper } from "mapper";
 
 export interface IOperationConfiguration<S, D, T> {
 	mapFrom: ( selector: ElementSelector<T>, configuration?: (fieldConfiguration: IFieldConfiguration<S, D>) => IFieldConfiguration<S, D> ) => ElementsType<T>;
 	ignore: () => ElementsType<T>;
-	//#region To do
-	mapAs: (selector: ElementSelector<T>, signature: MapSignature) => ElementsType<T>;
-	//#endregion
+	mapAs: (selector: ElementSelector<T>, signature: MapSignature, configuration?: (fieldConfiguration: IFieldConfiguration<S, D>) => IFieldConfiguration<S, D>) => ElementsType<T>;
 }
 
 export interface ISourceOperationConfiguration<T> {
@@ -27,7 +25,8 @@ export class OperationConfiguration<S, D, T> implements IOperationConfiguration<
 		private _entity: T,
 		private _source: S,
 		private _destination: D,
-		private _fieldConfiguration: FieldConfiguration<S, D> = new FieldConfiguration()
+		private _fieldConfiguration: FieldConfiguration<S, D> = new FieldConfiguration(),
+		private _mapper: Mapper
 	) {}
 
 	mapFrom: (selector: ElementSelector<T>, configuration?: (fieldConfiguration: IFieldConfiguration<S, D>) => IFieldConfiguration<S, D> ) => ElementsType<T> =
@@ -56,8 +55,26 @@ export class OperationConfiguration<S, D, T> implements IOperationConfiguration<
 	ignore = () => undefined as ElementsType<T>;
 
 	//#region To do
-	mapAs = (selector: ElementSelector<T>, signature: MapSignature) => {
-		throw new Error('Method not implemented.');
+	mapAs = (selector: ElementSelector<T>, signature: MapSignature, configuration?: (fieldConfiguration: IFieldConfiguration<S, D>) => IFieldConfiguration<S, D>) => {
+		if (configuration) {
+			this._fieldConfiguration = configuration(this._fieldConfiguration) as FieldConfiguration<S, D>;
+		}
+
+		if (this._fieldConfiguration.sourcePreconditions || this._fieldConfiguration.destinationPrecondition) {
+			// check preconditions
+			const sourcePreconditionsPassing = this._fieldConfiguration.sourcePreconditions
+				.reduce(
+					(passing, pre) => pre(this._source) ? passing : false, true
+				);
+			const destinationPreconditionsPassing = this._fieldConfiguration.destinationPreconditions
+				.reduce(
+					(passing, pre) => pre(this._destination) ? passing : false, true
+				);
+			if (!sourcePreconditionsPassing || !destinationPreconditionsPassing)
+				return;
+		}
+
+		return this._mapper.map<T[keyof T], T[keyof T]>(signature, selector(this._entity));
 	}
 	//#endregion
 }
