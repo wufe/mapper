@@ -168,4 +168,14 @@ describe("Mapper", () => {
         expect((mappedDestination as any).b).to.not.equal(source.b);
         expect(mappedDestination.c).to.not.equal(source.c);
     });
+    it("should check if preconditions are satisfied first", () => {
+        const mapper = new Mapper();
+        mapper.createMap<S, D>(mappingSignature, D)
+            .forMember("a", opt => opt.mapFrom(s => s.a, /* configuration */));
+
+        const source = new S();
+        source.a = 'a';
+
+        const mappedDestination = mapper.map<S, D>(mappingSignature, source);
+    });
 });

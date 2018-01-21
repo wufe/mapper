@@ -29,3 +29,26 @@ export class Configuration implements ISingleMapConfiguration {
             return this;
         };
 }
+
+export type TPreconditionConfiguration<T> = (element: T) => boolean;
+
+export interface IFieldConfiguration<S, D> {
+    precondition: (configuration: TPreconditionConfiguration<S>) => this;
+    destinationPrecondition: (configuration: TPreconditionConfiguration<D>) => this;
+}
+
+export class FieldConfiguration<S, D> implements IFieldConfiguration<S, D> {
+
+    private _sourcePreconditions: TPreconditionConfiguration<S>[] = [];
+    private _destPreconditions: TPreconditionConfiguration<D>[] = [];
+
+    precondition(configuration: TPreconditionConfiguration<S>) {
+        this._sourcePreconditions.push(configuration);
+        return this;
+    }
+
+    destinationPrecondition(configuration: TPreconditionConfiguration<D>) {
+        this._destPreconditions.push(configuration);
+        return this;
+    }
+}

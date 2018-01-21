@@ -75,14 +75,14 @@ export class Map<S, D> implements IMap<S, D>{
 		let destinationObject: D = destination !== undefined ? destination : new this.DestinationClass();
 		let mappedProperties: string[] = [];
 		for(let destOperation of this._destOperations){
-			let operationConfiguration = new OperationConfiguration<S>(source);
+			let operationConfiguration = new OperationConfiguration<S, D, S>(source);
 			let newValue = destOperation.operation(operationConfiguration) as any;
 			if(newValue !== undefined)
 				destinationObject[destOperation.selector] = newValue;
 			mappedProperties.push(destOperation.selector);
 		}
 		for(let sourceOperation of this._sourceOperations){
-			let operationConfiguration = new OperationConfiguration<D>(destinationObject);
+			let operationConfiguration = new OperationConfiguration<S, D, D>(destinationObject);
 			let newValue = sourceOperation.operation(operationConfiguration) as any;
 			if(newValue !== undefined)
 				source[sourceOperation.selector] = newValue;
