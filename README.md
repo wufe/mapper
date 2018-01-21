@@ -15,7 +15,7 @@ Supports:
 + ~~Override of pre-existing rules to behave differently in runtime (edge cases)~~
 + ~~Array mapping~~
 
-**Redundant mapping implementation idea**  
+**Redundant mapping implementation ideas**  
 
 ```typescript
 mapper.createMap<ProductEntity, Product>(productSignature, Product)
@@ -25,3 +25,7 @@ mapper.createMap<ProductEntity, Product>(productSignature, Product)
         )
     );
 ```
+
+**Denormalization helpers ideas**
+
+The library should flatten objects preserving references.  
