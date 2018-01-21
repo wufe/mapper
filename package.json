@@ -22,7 +22,8 @@
   "scripts": {
     "build": "webpack --env.development",
     "build:prod": "webpack --env.production",
-    "test": "mocha -r ts-node/register -r tsconfig-paths/register src/tests/**/*.test.ts"
+    "test": "mocha -r ts-node/register -r tsconfig-paths/register src/tests/**/*.test.ts",
+    "start": "ts-node -r tsconfig-paths/register index.ts"
   },
   "types": "types"
 }

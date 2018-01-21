@@ -19,12 +19,11 @@ export type Operation<S, D, T, K> = {
 };
 
 export class OperationConfiguration<S, D, T> implements IOperationConfiguration<S, D, T>, ISourceOperationConfiguration<T>{
-	private _fieldConfiguration: FieldConfiguration<S, D> = new FieldConfiguration();
-
 	constructor(
 		private _entity: T,
 		private _source: S,
-		private _destination: D
+		private _destination: D,
+		private _fieldConfiguration: FieldConfiguration<S, D> = new FieldConfiguration()
 	) {}
 
 	mapFrom: (selector: ElementSelector<T>, configuration?: (fieldConfiguration: IFieldConfiguration<S, D>) => IFieldConfiguration<S, D> ) => ElementsType<T> =

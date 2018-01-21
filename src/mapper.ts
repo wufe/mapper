@@ -34,7 +34,7 @@ export class Mapper {
 	};
 
 	mapWith<S, D>(
-		mapConfiguration: TConfigurationSetter<ISingleMapConfiguration>,
+		mapConfiguration: TConfigurationSetter<ISingleMapConfiguration<S, D>>,
 		{source, destination}: MapSignature,
 		sourceEntity: S,
 		destinationEntity?: D

@@ -19,7 +19,7 @@ export class Map<S, D> implements IMap<S, D>{
 
 	constructor(
         private DestinationClass: { new(): D },
-        private _configuration: Configuration = new Configuration()
+        private _configuration: Configuration<S, D> = new Configuration()
     ) {}
     
     private filterOperationsBySelector(selector: StringElementSelector<S> | StringElementSelector<D>) {
@@ -32,7 +32,7 @@ export class Map<S, D> implements IMap<S, D>{
 			this._configuration = {
 				...this._configuration
 			};
-			this._configuration = mapConfiguration(this._configuration) as Configuration;
+			this._configuration = mapConfiguration(this._configuration) as Configuration<S, D>;
             return this;
         }
 
@@ -61,15 +61,15 @@ export class Map<S, D> implements IMap<S, D>{
 			return this.internalMap(this._configuration, source, destination);
 		};
 
-	mapWith: (mapConfiguration: TConfigurationSetter<ISingleMapConfiguration>, sourceEntity: S, destinationEntity?: D) => D =
+	mapWith: (mapConfiguration: TConfigurationSetter<ISingleMapConfiguration<S, D>>, sourceEntity: S, destinationEntity?: D) => D =
 		(mapConfiguration, source, destination) => {
 			const newConfiguration = mapConfiguration({
 				...this._configuration
-			} as Configuration);
-			return this.internalMap(newConfiguration as Configuration, source, destination);
+			} as Configuration<S, D>);
+			return this.internalMap(newConfiguration as Configuration<S, D>, source, destination);
 		};
 
-	private internalMap(configuration: Configuration, source: S, destination?: D) {
+	private internalMap(configuration: Configuration<S, D>, source: S, destination?: D) {
 		if (!source)
 			return;
 		let destinationObject: D = destination !== undefined ? destination : new this.DestinationClass();
