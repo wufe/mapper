@@ -1,5 +1,7 @@
 import { Mapper } from "mapper";
 
+import { Mapper } from "mapper";
+
 class ProductEntity {
     items: ItemEntity[] = [];
 }
@@ -31,16 +33,19 @@ const itemSignature = {
 
 const mapper = new Mapper();
 mapper.createMap<ProductEntity, Product>(productSignature, Product)
-    .forMember("items", opt => opt.mapFrom(source => source.items, conf => conf.withProjection((source, dest) => {
-        const ret = mapper
-            .mapArray<ItemEntity, Item>(itemSignature, source.items);
-        ret.forEach(items => items.product = dest);
-        return ret;
-    })))
+    .forMember("items", opt =>
+        opt.mapFrom(source => source.items)
+            .withProjection((source, dest) => {
+                const ret = mapper
+                    .mapArray<ItemEntity, Item>(itemSignature, source.items);
+                ret.forEach(items => items.product = dest);
+                return ret;
+            })
+    );
 mapper.createMap<ItemEntity, Item>(itemSignature, Item);
 
 const mappedDestination = mapper.map<ProductEntity, Product>(productSignature, source);
 
 console.log(mappedDestination);
 
-console.log(mappedDestination.items[0].product.items[0].product.items[0].product)
+console.log(mappedDestination.items[0].product.items[0].product.items[0].product);

@@ -78,10 +78,17 @@ export class Map<S, D> implements IMap<S, D>{
 		let mappedProperties: string[] = [];
 		for(let destOperation of this._destOperations){
 			let operationConfiguration = new OperationConfiguration<S, D, S>(source, source, destinationObject, configuration as FieldConfiguration<S, D>, this._mapper);
-			let newValue = destOperation.operation(operationConfiguration) as any;
+			destOperation.operation(operationConfiguration);
+			let newValue;
+			// check preconditions
+			const operationPreconditionsPassing = operationConfiguration.arePreconditionsPassing(operationConfiguration.preconditions);
+			const mapActionPreconditionsPassing = operationConfiguration.arePreconditionsPassing(configuration.preconditions);
+			if (operationPreconditionsPassing && mapActionPreconditionsPassing)
+				newValue = operationConfiguration.selectedElement as any;
+			
 			// apply projection
-			if(configuration.projectionConfiguration !== undefined)
-				newValue = configuration.projectionConfiguration(source, destinationObject);
+			if(operationConfiguration.projectionConfiguration !== undefined)
+				newValue = operationConfiguration.projectionConfiguration(source, destinationObject);
 			if(newValue !== undefined)
 				destinationObject[destOperation.selector] = newValue;
 			mappedProperties.push(destOperation.selector);
