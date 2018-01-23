@@ -24,9 +24,18 @@ mapper.createMap<ProductEntity, Product>(productSignature, Product)
     );
 mapper.createMap<ItemEntity, Item>(itemSignature, Item)
     .forMember("product", opt =>
-        opt.mapFrom(() => opt.parent.destination)
+        opt
+            .withPrecondition(() => opt.parent.signature === productSignature)
+            .mapFrom(() => opt.parent.destination)
     );
 ```
+
+So the parent should have
++ depth
++ source
++ destination
++ signature
++ parent
 
 **Denormalization helpers ideas**
 
