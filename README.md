@@ -40,3 +40,8 @@ So the parent should have
 **Denormalization helpers ideas**
 
 The library should flatten objects preserving references.  
+
+**TODO**
+
++ Pass parent, depth to operation.configuration through another map
++ Implement field configuration
