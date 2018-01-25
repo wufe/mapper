@@ -45,3 +45,6 @@ The library should flatten objects preserving references.
 
 + Pass parent, depth to operation.configuration through another map
 + Implement field configuration
++ Automagically recognize arrays
++ Preserve references?
++ Max depth?
