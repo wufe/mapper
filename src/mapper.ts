@@ -1,5 +1,7 @@
 import { IGenericMap, IMap, Map } from "map";
 import { IConfiguration, Configuration, IMapConfiguration, ISingleMapConfiguration, TConfigurationSetter } from "configuration";
+import { TMapperConfigurationSetter, IMapperConfiguration, buildMapperConfiguration, MapperConfiguration } from "conf/mapper.configuration";
+import { TMapActionConfigurationSetter } from "conf/map-action.configuration";
 
 export type MapSignature = {
 	source: symbol;
@@ -12,19 +14,19 @@ export type Mapping = MapSignature & {
 
 export class Mapper {
     private _mappings: Mapping[] = [];
-	private _configuration = new Configuration();
+	
+	private configuration: IMapperConfiguration = buildMapperConfiguration();
 
-    withConfiguration: (mapperConfiguration: TConfigurationSetter<IConfiguration>) => this =
-        (mapperConfiguration) => {
-            mapperConfiguration(this._configuration);
-            return this;
-        };
+    withConfiguration(mapperConfiguration: TMapperConfigurationSetter): this { 
+		this.configuration = buildMapperConfiguration(mapperConfiguration);
+		return this;
+	}
 
 	createMap<S, D>({
 		source,
 		destination
 	}: MapSignature, destinationEntity: { new(): D }): IMap<S, D> {
-		const map = new Map<S, D>(destinationEntity, this._configuration as Configuration<S, D>, this);
+		const map = new Map<S, D>(destinationEntity, this.configuration as MapperConfiguration, this);
 		this._mappings.push({
 			source,
 			destination,
@@ -37,7 +39,7 @@ export class Mapper {
 		{ source, destination }: MapSignature,
 		sourceEntity: S,
 		destinationEntity?: D,
-		mapActionConfiguration?: TConfigurationSetter<ISingleMapConfiguration<S, D>>
+		mapActionConfiguration?: TMapActionConfigurationSetter<S, D>
 	): D {
 		const map = this.getMap<S, D>({ source, destination });
 		if (!map)
