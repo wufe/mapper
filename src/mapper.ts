@@ -1,5 +1,4 @@
 import { IGenericMap, IMap, Map } from "map";
-import { IConfiguration, Configuration, IMapConfiguration, ISingleMapConfiguration, TConfigurationSetter } from "configuration";
 import { TMapperConfigurationSetter, IMapperConfiguration, buildMapperConfiguration, MapperConfiguration } from "conf/mapper.configuration";
 import { TMapActionConfigurationSetter } from "conf/map-action.configuration";
 
@@ -65,7 +64,7 @@ export class Mapper {
 		{source, destination}: MapSignature,
 		sourceArray: S[],
 		destinationArray?: D[],
-		mapActionConfiguration?: TConfigurationSetter<ISingleMapConfiguration<S, D>>
+		mapActionConfiguration?: TMapActionConfigurationSetter<S, D>
 	): D[] {
 		const map = this.getMap<S, D>({ source, destination });
 		if (!map)

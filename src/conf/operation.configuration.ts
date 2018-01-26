@@ -1,7 +1,6 @@
 import { ElementSelector, StringElementSelector } from "selectors";
 import { MapSignature, Mapper } from "mapper";
 import { IPreconditionConfiguration, TPrecondition } from "conf/precondition.configuration";
-import { IFieldConfiguration } from "conf/field.configuration";
 import { MapActionConfiguration } from "conf/map-action.configuration";
 import { TParent } from "conf/map.configuration";
 
@@ -25,7 +24,7 @@ export type TOperationConfigurationSettings<S, D> = {
 };
 
 export interface IOperationConfiguration<S, D> extends IPreconditionConfiguration<S, D> {
-	mapFrom: ( selector: ElementSelector<S>, configuration?: (fieldConfiguration: IFieldConfiguration<S, D>) => IFieldConfiguration<S, D> ) => this;
+	mapFrom: (selector: ElementSelector<S>) => this;
 	ignore: () => this;
 	mapAs: (selector: ElementSelector<S>, signature: MapSignature) => this;
 	withProjection: (projectionConfiguration: TProjectionConfiguration<S, D>) => this;
@@ -83,7 +82,7 @@ export class OperationConfiguration<S, D> implements IOperationConfiguration<S, 
 		projection: undefined
 	};
 
-	mapFrom = (selector: ElementSelector<S>, configuration?: (fieldConfiguration: IFieldConfiguration<S, D>) => IFieldConfiguration<S, D>) => {
+	mapFrom = (selector: ElementSelector<S>) => {
 		this.operationConfigurationSettings.selected = selector(this.entity);
 		return this;
 	}
