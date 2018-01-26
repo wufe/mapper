@@ -12,7 +12,7 @@ export interface IMap<S, D> extends IGenericMap {
     withConfiguration: (mapConfiguration: TMapConfigurationSetter<S, D>) => this;
 	forMember: ( selector: StringElementSelector<D>, operation: TOperationConfigurationSetter<S, D> ) => this;
 	forSourceMember: ( selector: StringElementSelector<S>, operation: TSourceOperationConfigurationSetter ) => this;
-	map: (sourceEntity: S, destinationEntity?: D) => D;
+	map: (sourceEntity: S | Array<S>, destinationEntity?: D | Array<D>) => D | Array<D>;
 }
 
 export class Map<S, D> implements IMap<S, D>{
@@ -72,7 +72,7 @@ export class Map<S, D> implements IMap<S, D>{
 		return this;
 	};
 
-	map = (source: S, destination?: D, mapActionConfigurationSetter?: TMapActionConfigurationSetter<S, D>): D => {
+	map = (source: S | Array<S>, destination?: D | Array<D>, mapActionConfigurationSetter?: TMapActionConfigurationSetter<S, D>): D | Array<D> => {
 		const configuration = new MapActionConfiguration<S, D>();
 		configuration.mapperSettings = {
 			...this.mapperConfiguration.mapperSettings
@@ -81,7 +81,17 @@ export class Map<S, D> implements IMap<S, D>{
 			this.mapConfigurationSetter(configuration);
 		if (mapActionConfigurationSetter)
 			mapActionConfigurationSetter(configuration);
-		return this.internalMap(configuration, source, destination);
+		// Automatic array map
+		if (configuration.mapperSettings.automaticallyMapArrays &&
+			Array.isArray(source)) {
+			const sources = (source as Array<S>);
+			let areDestinationsSet = Array.isArray(destination) &&
+				(destination as Array<D>).length === sources.length;
+			if (areDestinationsSet)
+				return sources.map((single, index) => this.internalMap(configuration, single, destination[index]));
+			return sources.map(single => this.internalMap(configuration, single));
+		}
+		return this.internalMap(configuration, source as S, destination as D);
 	};
 
 	private internalMap(configuration: MapActionConfiguration<S, D>, source: S, destination?: D) {

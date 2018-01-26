@@ -46,7 +46,19 @@ export class Mapper {
 		const map = this.getMap<S, D>({ source, destination });
 		if (!map)
 			return;
-		return map.map(sourceEntity, destinationEntity, mapActionConfiguration);
+		return map.map(sourceEntity, destinationEntity, mapActionConfiguration) as D;
+	}
+
+	mapMany<S, D>(
+		{ source, destination }: MapSignature,
+		sourceEntity: S,
+		destinationEntity?: D,
+		mapActionConfiguration?: TMapActionConfigurationSetter<S, D>
+	): Array<D> {
+		const map = this.getMap<S, D>({ source, destination });
+		if (!map)
+			return;
+		return map.map(sourceEntity, destinationEntity, mapActionConfiguration) as Array<D>;
 	}
 
 	mapArray<S, D>(
