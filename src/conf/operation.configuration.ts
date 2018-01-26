@@ -2,6 +2,8 @@ import { ElementSelector, StringElementSelector } from "selectors";
 import { MapSignature, Mapper } from "mapper";
 import { IPreconditionConfiguration, TPrecondition } from "conf/precondition.configuration";
 import { IFieldConfiguration } from "conf/field.configuration";
+import { MapActionConfiguration } from "conf/map-action.configuration";
+import { TParent } from "conf/map.configuration";
 
 export type TOperationConfigurationSetter<S, D> = (opt: IOperationConfiguration<S, D>) => IOperationConfiguration<S, D>;
 export type TSourceOperationConfigurationSetter = (opt: ISourceOperationConfiguration) => ISourceOperationConfiguration;
@@ -25,11 +27,12 @@ export type TOperationConfigurationSettings<S, D> = {
 export interface IOperationConfiguration<S, D> extends IPreconditionConfiguration<S, D> {
 	mapFrom: ( selector: ElementSelector<S>, configuration?: (fieldConfiguration: IFieldConfiguration<S, D>) => IFieldConfiguration<S, D> ) => this;
 	ignore: () => this;
-	mapAs: (selector: ElementSelector<S>, signature: MapSignature, configuration?: (fieldConfiguration: IFieldConfiguration<S, D>) => IFieldConfiguration<S, D>) => this;
+	mapAs: (selector: ElementSelector<S>, signature: MapSignature) => this;
 	withProjection: (projectionConfiguration: TProjectionConfiguration<S, D>) => this;
 	depth: number;
 	source: S;
 	destination: D;
+	signature: MapSignature;
 	getParent: <PS, PD>() => IOperationConfiguration<PS, PD>;
 }
 
@@ -63,7 +66,7 @@ export class OperationConfiguration<S, D> implements IOperationConfiguration<S, 
 			destination: D;
 			signature: MapSignature;
 			depth: number;
-			parent: any;
+			parent: TParent;
 		}
 	) {
 		this.mapper = mapper;
@@ -89,9 +92,18 @@ export class OperationConfiguration<S, D> implements IOperationConfiguration<S, 
 		return this;
 	}
 
-	mapAs = (selector: ElementSelector<S>, signature: MapSignature, configuration?: (fieldConfiguration: IFieldConfiguration<S, D>) => IFieldConfiguration<S, D>) => {
+	mapAs = (selector: ElementSelector<S>, signature: MapSignature) => {
 		this.operationConfigurationSettings.selected =
-			this.mapper.map(signature, selector(this.entity));
+			this.mapper.map(signature, selector(this.entity), undefined, configuration => {
+				(configuration as MapActionConfiguration<any, any>).setParent({
+					signature: this.signature,
+					depth: this.depth,
+					source: this.source,
+					destination: this.destination,
+					parent: this.parent
+				});
+				return configuration;
+			});
 		return this;
 	}
 

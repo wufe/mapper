@@ -4,6 +4,7 @@ import { TMapConfigurationSetter, buildMapConfiguration, IMapConfiguration } fro
 import { TOperationConfigurationSetter, TSourceOperationConfigurationSetter, TOperationConfiguration, TSourceOperationConfiguration, OperationConfiguration, SourceOperationConfiguration } from "conf/operation.configuration";
 import { TMapActionConfigurationSetter, MapActionConfiguration } from "conf/map-action.configuration";
 import { MapperConfiguration, IMapperConfiguration } from "conf/mapper.configuration";
+import { MapSignature } from "index";
 
 export interface IGenericMap {}
 
@@ -24,6 +25,7 @@ export class Map<S, D> implements IMap<S, D>{
 	constructor(
         private DestinationClass: { new(): D },
 		private mapperConfiguration: MapperConfiguration,
+		private signature: MapSignature,
 		private mapper: Mapper
     ) {}
     
@@ -88,13 +90,16 @@ export class Map<S, D> implements IMap<S, D>{
 		let destinationObject: D = destination !== undefined ? destination : new this.DestinationClass();
 		let mappedProperties: string[] = [];
 		for(let destOperation of this.destinationOperations){
+			// inherit configuration from previous map command
+			const parent = configuration.getParent();
+			const depth = parent ? parent.depth + 1 : 0;
 			let operationConfiguration =
 				new OperationConfiguration<S, D>(source, {
-					depth: undefined,
+					depth,
 					destination: destinationObject,
 					mapper: this.mapper,
-					parent: undefined,
-					signature: undefined,
+					parent,
+					signature: this.signature,
 					source: source
 				});
 			destOperation.operation(operationConfiguration);

@@ -38,7 +38,10 @@ mapper.createMap<ProductEntity, Product>(productSignature, Product)
         opt.mapAs(source => source.item, itemSignature)
     );
 mapper.createMap<ItemEntity, Item>(itemSignature, Item)
-    .forMember("product", opt => opt.mapFrom(() => opt.getParent<ProductEntity, Product>()!.destination));
+    .forMember("product", opt => opt
+        .withPrecondition(() => opt.getParent()!.signature === productSignature)
+        .mapFrom(() => opt.getParent<ProductEntity, Product>()!.destination)
+    );
 
 const mappedDestination = mapper.map<ProductEntity, Product>(productSignature, source);
 

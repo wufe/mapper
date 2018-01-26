@@ -22,14 +22,16 @@ export class Mapper {
 		return this;
 	}
 
-	createMap<S, D>({
-		source,
-		destination
-	}: MapSignature, destinationEntity: { new(): D }): IMap<S, D> {
-		const map = new Map<S, D>(destinationEntity, this.configuration as MapperConfiguration, this);
+	createMap<S, D>(signature: MapSignature, destinationEntity: { new(): D }): IMap<S, D> {
+		const map = new Map<S, D>(
+			destinationEntity,
+			this.configuration as MapperConfiguration,
+			signature,
+			this
+		);
 		this._mappings.push({
-			source,
-			destination,
+			source: signature.source,
+			destination: signature.destination,
 			map
 		});
 		return map;
