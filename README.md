@@ -10,7 +10,7 @@ It is designed with redux's reducers in mind, so it is a perfect fit when used a
 Supports:
 + ~~Immutability~~
 + ~~Nested mapping~~
-+ Redudant mapping
++ ~~Redudant mapping~~
 + Denormalization helpers
 + ~~Override of pre-existing rules to behave differently in runtime (edge cases)~~
 + ~~Array mapping~~
