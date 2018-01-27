@@ -1,5 +1,7 @@
 # Mapper
 
+## This library is in development stage.
+
 ### Object to object mapper in Typescript
 
 **Inspired by [Automapper](https://github.com/automapper/automapper)**
