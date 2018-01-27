@@ -115,11 +115,23 @@ export class Map<S, D> implements IMap<S, D>{
 			destOperation.operation(operationConfiguration);
 			const preconditionsPassing = operationConfiguration.arePreconditionsSatisfied() &&
 				configuration.arePreconditionsSatisfied(source, destinationObject);
-			const newValue = preconditionsPassing ?
+			let newValue = preconditionsPassing ?
 				operationConfiguration.getValue() : undefined;
 			
-			if(newValue !== undefined)
+			if (newValue !== undefined) {
+				// immutability check
+				let shouldCheckImmutability: boolean = !operationConfiguration.operationConfigurationSettings.immutably === false &&
+					(operationConfiguration.operationConfigurationSettings.immutably || configuration.mapperSettings.automaticallyApplyImmutability);
+				if (typeof newValue === 'object') {
+					if (Array.isArray(newValue)) {
+						newValue = [...newValue];
+					} else {
+						newValue = {...newValue};
+					}
+				}
 				destinationObject[destOperation.selector] = newValue;
+			}
+				
 			mappedProperties.push(destOperation.selector);
 		}
 		for(let sourceOperation of this.sourceOperations){

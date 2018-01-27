@@ -37,6 +37,7 @@ mapper.withConfiguration(conf => conf.shouldRequireExplicitlySetProperties(true)
 mapper.createMap<ProductEntity, Product>(productSignature, Product)
     .forMember("items", opt =>
         opt.mapAs(source => source.items, itemSignature)
+            .immutably()
     );
 mapper.createMap<ItemEntity, Item>(itemSignature, Item)
     .forMember("product", opt => opt
@@ -49,4 +50,4 @@ const mappedDestination = mapper.map<ProductEntity, Product>(productSignature, s
 console.log(mappedDestination);
 
 // console.log(mappedDestination.item.product.item.product.item.product);
-console.log(mappedDestination.items[0].product.items[0].product.items[0].product);
+// console.log(mappedDestination.items[0].product.items[0].product.items[0].product);

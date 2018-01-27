@@ -6,7 +6,7 @@ export interface IMapActionConfiguration<S, D> extends IMapConfiguration<S, D> {
 
 export type TMapActionConfigurationSetter<S, D> = (configuration: IMapActionConfiguration<S, D>) => IMapActionConfiguration<S, D>;
 
-export class MapActionConfiguration<S, D> extends MapConfiguration<S, D> implements IMapConfiguration<S, D> {
+export class MapActionConfiguration<S, D> extends MapConfiguration<S, D> implements IMapActionConfiguration<S, D> {
 
 }
 

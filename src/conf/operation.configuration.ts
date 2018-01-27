@@ -21,6 +21,7 @@ export type TOperationConfigurationSettings<S, D> = {
 	preconditions: Array<TPrecondition<S, D>>;
 	selected: any;
 	projection: any;
+	immutably: boolean;
 };
 
 export interface IOperationConfiguration<S, D> extends IPreconditionConfiguration<S, D> {
@@ -28,6 +29,7 @@ export interface IOperationConfiguration<S, D> extends IPreconditionConfiguratio
 	ignore: () => this;
 	mapAs: (selector: ElementSelector<S>, signature: MapSignature) => this;
 	withProjection: (projectionConfiguration: TProjectionConfiguration<S, D>) => this;
+	immutably: (value?: boolean) => this;
 	depth: number;
 	source: S;
 	destination: D;
@@ -79,7 +81,8 @@ export class OperationConfiguration<S, D> implements IOperationConfiguration<S, 
 	operationConfigurationSettings: TOperationConfigurationSettings<S, D> = {
 		preconditions: [],
 		selected: undefined,
-		projection: undefined
+		projection: undefined,
+		immutably: undefined
 	};
 
 	mapFrom = (selector: ElementSelector<S>) => {
@@ -117,6 +120,11 @@ export class OperationConfiguration<S, D> implements IOperationConfiguration<S, 
 
 	withPrecondition = (precondition: TPrecondition<S, D>) => {
 		this.operationConfigurationSettings.preconditions.push(precondition);
+		return this;
+	}
+
+	immutably = (value: boolean = true) => {
+		this.operationConfigurationSettings.immutably = value;
 		return this;
 	}
 

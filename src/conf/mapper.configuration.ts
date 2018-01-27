@@ -6,8 +6,8 @@ export type TMapperSettings = {
     requireExplicitlySetProperties: boolean;
     ignoreSourcePropertiesIfNotInDestination: boolean;
     automaticallyMapArrays: boolean;
-    preserveReferences: boolean;
     maxDepth: number;
+    automaticallyApplyImmutability: boolean;
 };
 
 export interface IMapperConfiguration extends IGenericSettingsConfiguration {}
@@ -18,8 +18,8 @@ export class MapperConfiguration implements IMapperConfiguration {
         automaticallyMapArrays: true,
         ignoreSourcePropertiesIfNotInDestination: false,
         maxDepth: 3,
-        preserveReferences: true,
-        requireExplicitlySetProperties: false
+        requireExplicitlySetProperties: false,
+        automaticallyApplyImmutability: false
     };
 
     shouldRequireExplicitlySetProperties = (value: boolean) => {
@@ -37,8 +37,8 @@ export class MapperConfiguration implements IMapperConfiguration {
         return this;
     }
 
-    shouldPreserveReferences = (value: boolean) => {
-        this.mapperSettings.preserveReferences = value
+    shouldAutomaticallyApplyImmutability = (value: boolean) => {
+        this.mapperSettings.automaticallyApplyImmutability = value
         return this;
     }
 

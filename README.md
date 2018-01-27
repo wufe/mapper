@@ -54,7 +54,7 @@ class Obj {
 ```
 
 So the configuration should accept an "*automaticallyApplyImmutability*" and a "*immutably*"  
-function on the map and map-action configuration.  
+function on the operation configuration.  
 
 **TODO**
 
