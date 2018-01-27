@@ -26,7 +26,7 @@ Supports:
 
 Each map ruleset requires a mapping signature, to be able to identify object types at runtime.  
 
-**Create a mapper and instantiate your first map ruleset**
+**Create a mapper and instantiate your first map ruleset**  
 Syntax:  
 `mapper.createMap<S, D>(signature: MapSignature, destination: { new(): D })`
 
