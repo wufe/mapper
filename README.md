@@ -41,6 +41,21 @@ So the parent should have
 
 The library should flatten objects preserving references.  
 
+**References & immutability**
+
+The idea is to preserve reference by default on sub-objects mapping.
+*e.g*
+```
+class Obj {
+    property: { // this property is references by default
+        a: string;
+    };
+}
+```
+
+So the configuration should accept an "*automaticallyApplyImmutability*" and a "*immutably*"  
+function on the map and map-action configuration.  
+
 **TODO**
 
 + Preserve references?
