@@ -108,3 +108,4 @@ build
 dist
 types
 wiki
+index.ts
