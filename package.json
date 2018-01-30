@@ -1,5 +1,5 @@
 {
-  "name": "@wufe/mapper",
+  "name": "type-mapper",
   "version": "0.0.1",
   "description": "Object to object mapper in Typescript",
   "main": "dist/index.js",
