@@ -1,4 +1,5 @@
 const path = require('path');
+const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 
 module.exports = (env) => {
     const isDev = !(env && env.production);
@@ -31,6 +32,10 @@ module.exports = (env) => {
                 }
             ]
         },
-        target: 'web'
+        target: 'web',
+        plugins: isDev ?
+            [] : [
+                new UglifyJSPlugin()
+            ]
     };
 }
