@@ -1,7 +1,5 @@
 # Mapper - Object to object mapper in Typescript
 
-## This library is in development stage.
-
 **Inspired by [Automapper](https://github.com/automapper/automapper)**
 
 **Warning**: This is *NOT* a complete reimplementation of Automapper.  
@@ -16,7 +14,6 @@ Supports:
 + Immutability
 + Nested mapping
 + Redudant mapping
-+ Denormalization helpers - *TODO*
 + Override of pre-existing rules to behave differently in runtime (edge cases)
 + Array mapping
 
@@ -50,8 +47,8 @@ const destinationObject = mapper.map<SourceClass, DestinationClass>(sourceDestin
 // destinationObject.a is now 'a'
 ```
 
-## Development notes
+***
 
-**Denormalization helpers ideas**
+## Documentation
 
-The library should flatten objects preserving references.  
+Check the documentation in the [wiki](https://github.com/Wufe/mapper/wiki).

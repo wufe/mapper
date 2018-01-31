@@ -120,9 +120,10 @@ export class Map<S, D> implements IMap<S, D>{
 			
 			if (newValue !== undefined) {
 				// immutability check
-				let shouldCheckImmutability: boolean = !operationConfiguration.operationConfigurationSettings.immutably === false &&
-					(operationConfiguration.operationConfigurationSettings.immutably || configuration.mapperSettings.automaticallyApplyImmutability);
-				if (typeof newValue === 'object') {
+				let shouldCheckImmutability: boolean = operationConfiguration.operationConfigurationSettings.immutably === true ||
+					(operationConfiguration.operationConfigurationSettings.immutably === undefined && configuration.mapperSettings.automaticallyApplyImmutability);
+				
+				if (shouldCheckImmutability && typeof newValue === 'object') {
 					if (Array.isArray(newValue)) {
 						newValue = [...newValue];
 					} else {

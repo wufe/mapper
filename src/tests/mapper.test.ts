@@ -362,4 +362,83 @@ describe("Mapper", () => {
 
         expect(mappedDestination.a.d).to.equal(source.a.s);
     });
+    it("should complete the example", () => {
+        class ProductEntity {
+            productName: string;
+            complexObject: {
+                value: string;
+            };
+            prices: Array<PriceEntity>;
+        }
+        class PriceEntity {
+            price: number;
+        }
+        
+        class ProductModel {
+            name: string;
+            prices: Array<PriceModel>;
+            complexObject: {
+                value: string;
+            };
+        }
+        class PriceModel {
+            amount: number;
+            product: ProductModel;
+        }
+        const productSign = {
+            source: Symbol('ProductEntity'),
+            destination: Symbol('ProductModel')
+        };
+        
+        const priceSign = {
+            source: Symbol('PriceEntity'),
+            destination: Symbol('PriceModel')
+        };
+        
+        const mapper = new Mapper();
+        mapper
+            .withConfiguration(conf => conf
+                .shouldRequireExplicitlySetProperties(true) // Explicitly set properties only
+                .shouldAutomaticallyMapArrays(true));       // Map arrays also
+        
+        mapper.createMap<ProductEntity, ProductModel>(productSign, ProductModel)
+            .forMember('name', opt => opt.mapFrom(src => src.productName))
+            .forMember('prices', opt => opt.mapAs(src => src.prices, priceSign))
+            .forMember('complexObject', opt => opt
+                .mapFrom(src => src.complexObject)
+                .immutably()
+            );
+        
+        mapper.createMap<PriceEntity, PriceModel>(priceSign, PriceModel)
+            .forMember('amount', opt => opt.mapFrom(src => src.price))
+            .forMember('product', opt => opt
+                .mapFrom(() => {
+                    const parent = opt.getParent<ProductEntity, ProductModel>();
+                    // preserve a reference of the product in which this price is contained
+                    return parent && parent.destination;
+                })
+                .withPrecondition(() => {
+                    // Precondition not required but recommended
+                    const parent = opt.getParent<ProductEntity, ProductModel>();
+                    return parent && (parent.signature === productSign);
+                })
+            );
+            
+        const productSource = new ProductEntity();
+        productSource.productName = 'The mighty product.';
+        productSource.complexObject = {
+            value: 'aaa'
+        };
+        productSource.prices = [13, 41, 57, 40].map(p => {
+            const priceEntity = new PriceEntity();
+            return priceEntity;
+        });
+
+        const productWithImmutability = mapper.map<ProductEntity, ProductModel>(productSign, productSource);
+
+        // So immutability works
+        expect(productWithImmutability.complexObject).to.not.equal(productSource.complexObject);
+        expect(productWithImmutability.prices[0].product.prices[0].product.prices[0].product).to.equal(productWithImmutability);
+
+    });
 });
