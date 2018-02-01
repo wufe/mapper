@@ -1,8 +1,8 @@
-import { ElementSelector, StringElementSelector } from "selectors";
-import { MapSignature, Mapper } from "mapper";
-import { IPreconditionConfiguration, TPrecondition } from "conf/precondition.configuration";
-import { MapActionConfiguration } from "conf/map-action.configuration";
-import { TParent } from "conf/map.configuration";
+import { ElementSelector, StringElementSelector } from "../selectors";
+import { MapSignature, Mapper } from "../mapper";
+import { IPreconditionConfiguration, TPrecondition } from "./precondition.configuration";
+import { MapActionConfiguration } from "./map-action.configuration";
+import { TParent } from "./map.configuration";
 
 export type TOperationConfigurationSetter<S, D> = (opt: IOperationConfiguration<S, D>) => IOperationConfiguration<S, D>;
 export type TSourceOperationConfigurationSetter = (opt: ISourceOperationConfiguration) => ISourceOperationConfiguration;

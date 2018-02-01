@@ -1,4 +1,4 @@
-import { IGenericSettingsConfiguration } from "conf/generic-settings.configuration";
+import { IGenericSettingsConfiguration } from "./generic-settings.configuration";
 
 export type TMapperConfigurationSetter = (configuration: IMapperConfiguration) => IMapperConfiguration;
 

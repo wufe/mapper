@@ -1,6 +1,6 @@
-import { IGenericSettingsConfiguration } from "conf/generic-settings.configuration";
-import { IPreconditionConfiguration } from "conf/precondition.configuration";
-import { IMapConfiguration, MapConfiguration } from "conf/map.configuration";
+import { IGenericSettingsConfiguration } from "./generic-settings.configuration";
+import { IPreconditionConfiguration } from "./precondition.configuration";
+import { IMapConfiguration, MapConfiguration } from "./map.configuration";
 
 export interface IMapActionConfiguration<S, D> extends IMapConfiguration<S, D> {}
 

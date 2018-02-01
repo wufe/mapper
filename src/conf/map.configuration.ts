@@ -1,7 +1,7 @@
-import { IGenericSettingsConfiguration } from "conf/generic-settings.configuration";
-import { IMapperConfiguration, MapperConfiguration } from "conf/mapper.configuration";
-import { IPreconditionConfiguration, TPrecondition } from "conf/precondition.configuration";
-import { MapSignature } from "mapper";
+import { IGenericSettingsConfiguration } from "./generic-settings.configuration";
+import { IMapperConfiguration, MapperConfiguration } from "./mapper.configuration";
+import { IPreconditionConfiguration, TPrecondition } from "./precondition.configuration";
+import { MapSignature } from "../mapper";
 
 /**
  * Should contain map-only configuration.

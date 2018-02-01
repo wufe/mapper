@@ -1,10 +1,9 @@
-import { StringElementSelector } from "selectors";
-import { Mapper } from "mapper";
-import { TMapConfigurationSetter, buildMapConfiguration, IMapConfiguration } from "conf/map.configuration";
-import { TOperationConfigurationSetter, TSourceOperationConfigurationSetter, TOperationConfiguration, TSourceOperationConfiguration, OperationConfiguration, SourceOperationConfiguration } from "conf/operation.configuration";
-import { TMapActionConfigurationSetter, MapActionConfiguration } from "conf/map-action.configuration";
-import { MapperConfiguration, IMapperConfiguration } from "conf/mapper.configuration";
-import { MapSignature } from "index";
+import { StringElementSelector } from "./selectors";
+import { Mapper, MapSignature } from "./mapper";
+import { TMapConfigurationSetter, buildMapConfiguration, IMapConfiguration } from "./conf/map.configuration";
+import { TOperationConfigurationSetter, TSourceOperationConfigurationSetter, TOperationConfiguration, TSourceOperationConfiguration, OperationConfiguration, SourceOperationConfiguration } from "./conf/operation.configuration";
+import { TMapActionConfigurationSetter, MapActionConfiguration } from "./conf/map-action.configuration";
+import { MapperConfiguration, IMapperConfiguration } from "./conf/mapper.configuration";
 
 export interface IGenericMap {}
 
