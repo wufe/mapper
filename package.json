@@ -1,6 +1,6 @@
 {
   "name": "@wufe/mapper",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Object to object mapper in Typescript",
   "main": "dist/index.js",
   "repository": "https://github.com/Wufe/mapper.git",
