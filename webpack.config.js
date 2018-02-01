@@ -28,7 +28,7 @@ module.exports = (env) => {
                         'node_modules',
                         '**/*.test.ts'
                     ],
-                    use: ['awesome-typescript-loader']
+                    use: ['ts-loader']
                 }
             ]
         },
