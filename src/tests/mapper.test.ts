@@ -468,4 +468,25 @@ describe("Mapper", () => {
         expect(destinationEntity).to.not.equal(undefined);
         expect(destinationEntity.destGreeting).to.equal(sourceEntity.sourceGreeting);
     });
+    it("should be able to map an implicitly set map without rules", () => {
+        class Destination {
+            hello: string;
+        }
+        
+        @mapTo(Destination)
+        class Source {
+            hello: string;
+            constructor() {
+                this.hello = 'world';
+            }
+        }
+        
+        const mapper = new Mapper();
+        
+        const sourceEntity = new Source();
+        const destinationEntity = mapper.map<Source, Destination>(sourceEntity);
+
+        expect(destinationEntity).to.not.equal(undefined);
+        expect(destinationEntity.hello).to.equal(sourceEntity.hello);
+    });
 });

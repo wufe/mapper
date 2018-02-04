@@ -1,6 +1,7 @@
 import { IGenericMap, IMap, Map } from "./map";
 import { TMapperConfigurationSetter, IMapperConfiguration, buildMapperConfiguration, MapperConfiguration } from "./conf/mapper.configuration";
 import { TMapActionConfigurationSetter } from "./conf/map-action.configuration";
+import { mappingsContainer } from "mappings-container";
 
 export type MapSignature = {
 	source: symbol;
@@ -87,7 +88,7 @@ export class Mapper {
 			const source: S = signatureOrSource;
 			const destination: D = sourceOrDestination;
 			const actionConfiguration: TMapActionConfigurationSetter<S, D> = destinationOrActionConfiguration;
-			const map = this.getImplicitMap<S, D>(source);
+			const map = this.getImplicitMap<S, D>(source) || this.getDanglingMap<S, D>(source);
 			if (!map)
 				return;
 			return map.map(source, destination, destinationOrActionConfiguration);
@@ -103,18 +104,6 @@ export class Mapper {
 			return map.map(sourceEntity, destinationEntity, mapActionConfiguration) as D;
 		}
 	}
-
-	// map<S, D>(
-	// 	{ source, destination }: MapSignature,
-	// 	sourceEntity: S,
-	// 	destinationEntity?: D,
-	// 	mapActionConfiguration?: TMapActionConfigurationSetter<S, D>
-	// ): D {
-	// 	const map = this.getMap<S, D>({ source, destination });
-	// 	if (!map)
-	// 		return;
-	// 	return map.map(sourceEntity, destinationEntity, mapActionConfiguration) as D;
-	// }
 
 	mapMany<S, D>(
 		{ source, destination }: MapSignature,
@@ -164,5 +153,12 @@ export class Mapper {
 		if (mapping)
 			map = mapping.map;
 		return map as Map<S, D>;
+	}
+
+	private getDanglingMap<S, D>(source: S): Map<S, D> {
+		const danglingMappings = mappingsContainer.find(mapping => source instanceof mapping.source);
+		if (!danglingMappings)
+			return;
+		return this.createMap<S, D>(danglingMappings.source) as Map<S, D>;
 	}
 }
