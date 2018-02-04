@@ -4,6 +4,8 @@ import { TMapConfigurationSetter, buildMapConfiguration, IMapConfiguration } fro
 import { TOperationConfigurationSetter, TSourceOperationConfigurationSetter, TOperationConfiguration, TSourceOperationConfiguration, OperationConfiguration, SourceOperationConfiguration } from "./conf/operation.configuration";
 import { TMapActionConfigurationSetter, MapActionConfiguration } from "./conf/map-action.configuration";
 import { MapperConfiguration, IMapperConfiguration } from "./conf/mapper.configuration";
+import { TGenericClass } from "./mapper";
+import { mappingsContainer } from "mappings-container";
 
 export interface IGenericMap {}
 
@@ -21,12 +23,32 @@ export class Map<S, D> implements IMap<S, D>{
 
 	private mapConfigurationSetter: TMapConfigurationSetter<S, D>;
 
+	private DestinationClass: TGenericClass<D> | undefined;
+	private mapperConfiguration: MapperConfiguration;
+	private signature: MapSignature | undefined;
+	private mapper: Mapper;
+
+	constructor(mapperConfiguration: MapperConfiguration, mapper: Mapper);
+	constructor(DestinationClass: TGenericClass<D>, mapperConfiguration: MapperConfiguration, signature: MapSignature, mapper: Mapper);
+
 	constructor(
-        private DestinationClass: { new(): D },
-		private mapperConfiguration: MapperConfiguration,
-		private signature: MapSignature,
-		private mapper: Mapper
-    ) {}
+		DestinationClassOrMapperConfiguration: any,
+		mapperConfigurationOrMapper: any,
+		signature?: MapSignature,
+		mapper?: Mapper
+    ) {
+		if (signature === undefined) {
+			// Implicit map
+			this.mapperConfiguration = DestinationClassOrMapperConfiguration;
+			this.mapper = mapperConfigurationOrMapper;
+		} else {
+			// Explicit map
+			this.DestinationClass = DestinationClassOrMapperConfiguration;
+			this.mapperConfiguration = mapperConfigurationOrMapper;
+			this.signature = signature;
+			this.mapper = mapper;
+		}
+	}
     
     private filterOperationsBySelector(selector: StringElementSelector<D>) {
         this.destinationOperations = this.destinationOperations.filter(opt => opt.selector !== selector);
@@ -96,7 +118,21 @@ export class Map<S, D> implements IMap<S, D>{
 	private internalMap(configuration: MapActionConfiguration<S, D>, source: S, destination?: D) {
 		if (!source)
 			return;
-		let destinationObject: D = destination !== undefined ? destination : new this.DestinationClass();
+		let destinationObject: D;
+		if (destination !== undefined) {
+			destinationObject = destination;
+		} else {
+			if (this.DestinationClass) {
+				destinationObject = new this.DestinationClass();
+			} else {
+				const container = mappingsContainer.find(
+					container => source instanceof container.source
+				);
+				if (!container)
+					throw new Error('Implicit mapping not found. Did you use the @mapTo decorator above the source class?');
+				destinationObject = new container.destination();
+			}
+		}
 		let mappedProperties: string[] = [];
 		for(let destOperation of this.destinationOperations){
 			// inherit configuration from previous map command

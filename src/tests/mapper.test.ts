@@ -2,6 +2,7 @@
 import "mocha";
 import { Mapper } from "mapper";
 import { expect } from "chai";
+import { mapTo } from "mapto-decorator";
 
 describe("Mapper class", () => {
     it("should be instantiated", () => {
@@ -420,7 +421,7 @@ describe("Mapper", () => {
                 .withPrecondition(() => {
                     // Precondition not required but recommended
                     const parent = opt.getParent<ProductEntity, ProductModel>();
-                    return parent && (parent.signature === productSign);
+                    return parent && (parent.source instanceof ProductEntity);
                 })
             );
             
@@ -440,5 +441,31 @@ describe("Mapper", () => {
         expect(productWithImmutability.complexObject).to.not.equal(productSource.complexObject);
         expect(productWithImmutability.prices[0].product.prices[0].product.prices[0].product).to.equal(productWithImmutability);
 
+    });
+    it("should be able to map an implicitly set map", () => {
+        class Destination {
+            destGreeting: string;
+            constructor() {
+                this.destGreeting = 'destination';
+            }
+        }
+        
+        @mapTo(Destination)
+        class Source {
+            sourceGreeting: string;
+            constructor() {
+                this.sourceGreeting = 'source';
+            }
+        }
+        
+        const mapper = new Mapper();
+        mapper.createMap<Source, Destination>(Source)
+            .forMember("destGreeting", opt => opt.mapFrom(src => src.sourceGreeting));
+        
+        const sourceEntity = new Source();
+        const destinationEntity = mapper.map<Source, Destination>(sourceEntity, undefined, conf => conf.shouldRequireExplicitlySetProperties(true));
+
+        expect(destinationEntity).to.not.equal(undefined);
+        expect(destinationEntity.destGreeting).to.equal(sourceEntity.sourceGreeting);
     });
 });
