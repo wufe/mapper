@@ -14,10 +14,12 @@ module.exports = (env) => {
                 './node_modules'
             ]
         },
-        entry: './src/index.ts',
+        entry:{
+            mapper: './src/index.ts'
+        },
         output: {
             path: path.resolve(__dirname, isDev ? 'build' : 'dist'),
-            filename: 'index.js',
+            filename: '[name].js',
             libraryTarget: 'umd'
         },
         module: {

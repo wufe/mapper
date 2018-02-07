@@ -2,7 +2,7 @@
   "name": "@wufe/mapper",
   "version": "0.4.2",
   "description": "Object to object mapper in Typescript",
-  "main": "dist/index.js",
+  "main": "index.js",
   "repository": "https://github.com/Wufe/mapper.git",
   "author": "Simone Bembi <simone.bembi@gmail.com>",
   "license": "MIT",
