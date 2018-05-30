@@ -489,4 +489,21 @@ describe("Mapper", () => {
         expect(destinationEntity).to.not.equal(undefined);
         expect(destinationEntity.hello).to.equal(sourceEntity.hello);
     });
+    it("should map following resolver rules", () => {
+
+        const resolver = (s: S, d: D) => s.a + 'c';
+
+        const mapper = new Mapper();
+        mapper.createMap<S, D>(mappingSignature, D)
+            .forMember('c', opt => opt.withProjection(resolver));
+
+        const source = new S();
+        source.a = 'a';
+
+        const mappedDestination = mapper.map<S, D>(mappingSignature, source);
+
+        expect(mappedDestination.a).to.not.be.undefined;
+        expect(mappedDestination.a).to.equal(source.a);
+        expect(mappedDestination.c).to.equal(source.a + 'c');
+    });
 });
