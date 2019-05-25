@@ -1,7 +1,7 @@
 import { IGenericMap, IMap, Map } from "./map";
 import { TMapperConfigurationSetter, IMapperConfiguration, buildMapperConfiguration, MapperConfiguration } from "./conf/mapper.configuration";
 import { TMapActionConfigurationSetter } from "./conf/map-action.configuration";
-import { mappingsContainer } from "mappings-container";
+import { mappingsContainer } from "./mappings-container";
 
 export type MapSignature = {
 	source: symbol;

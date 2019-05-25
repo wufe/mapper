@@ -5,7 +5,7 @@ import { TOperationConfigurationSetter, TSourceOperationConfigurationSetter, TOp
 import { TMapActionConfigurationSetter, MapActionConfiguration } from "./conf/map-action.configuration";
 import { MapperConfiguration, IMapperConfiguration } from "./conf/mapper.configuration";
 import { TGenericClass } from "./mapper";
-import { mappingsContainer } from "mappings-container";
+import { mappingsContainer } from "./mappings-container";
 
 export interface IGenericMap {}
 
@@ -168,7 +168,7 @@ export class Map<S, D> implements IMap<S, D>{
 				destinationObject[destOperation.selector] = newValue;
 			}
 				
-			mappedProperties.push(destOperation.selector);
+			mappedProperties.push(destOperation.selector as string);
 		}
 		for(let sourceOperation of this.sourceOperations){
 			let operationConfiguration = new SourceOperationConfiguration();
@@ -176,7 +176,7 @@ export class Map<S, D> implements IMap<S, D>{
 			// source operations are ignore-only,
 			// so the addition in the array of mapped properties
 			// should be enough
-			mappedProperties.push(sourceOperation.selector);
+			mappedProperties.push(sourceOperation.selector as string);
 		}
 		if (!configuration.mapperSettings.requireExplicitlySetProperties) {
 			for(let key in source){
@@ -184,9 +184,7 @@ export class Map<S, D> implements IMap<S, D>{
 					const destinationHasTheProperty = Object.keys(destinationObject).indexOf(key) > -1;
 					const shouldMap = destinationHasTheProperty || !configuration.mapperSettings.ignoreSourcePropertiesIfNotInDestination;
 					if (shouldMap) {
-						(destinationObject as D & {
-							[index: string]: any;
-						})[key] = source[key];
+						(destinationObject as any)[key] = source[key];
 					}
 				}
 			}

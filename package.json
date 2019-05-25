@@ -25,5 +25,5 @@
     "test": "mocha -r ts-node/register -r tsconfig-paths/register src/tests/**/*.test.ts",
     "start": "ts-node -r tsconfig-paths/register index.ts"
   },
-  "types": "types"
+  "types": "./types/index.d.ts"
 }
